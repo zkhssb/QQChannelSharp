@@ -1,5 +1,4 @@
 ﻿using QQGuildBotFunc.Dto.Members;
-using QQGuildBotFunc.Dto.MessageArk;
 using QQGuildBotFunc.Dto.MessageArks;
 using QQGuildBotFunc.Dto.Messages;
 using System;

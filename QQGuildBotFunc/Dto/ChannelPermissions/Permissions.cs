@@ -22,6 +22,6 @@ namespace QQGuildBotFunc.Dto.ChannelPermissions
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("permissions")]
-        public string? Permissions { get; set; }
+        public string? ApiPermissions { get; set; }
     }
 }

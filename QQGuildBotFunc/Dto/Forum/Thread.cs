@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace QQGuildBotFunc.Dto.Forum
+namespace QQGuildBotFunc.Dto.Forum;
 /// <summary>
 /// Thread 主题事件主体内容
 /// </summary>
@@ -22,5 +22,4 @@ public class Thread
 
     [JsonPropertyName("thread_info")]
     public required ThreadInfo ThreadInfo { get; set; }
-}
 }
