@@ -58,6 +58,12 @@ namespace QQGuildBotFunc.Dto.Channels
         /// <summary>
         /// 创建私密子频道的时候，同时带上 userID，能够将这些成员添加为私密子频道的成员
         /// 注意：只有创建私密子频道的时候才支持这个参数
+        /// <summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("private_user_ids")]
+        public string[]? PrivateUserIDs { get; set; }
+
+        /// <summary>
         /// 发言权限
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

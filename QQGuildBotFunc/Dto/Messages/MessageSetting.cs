@@ -21,6 +21,10 @@ namespace QQGuildBotFunc.Dto.Message
         public bool? DisablePushMsg { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("channel_ids")]
+        public string[]? ChannelIDs { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("channel_push_max_num")]
         public int? ChannelPushMaxNum { get; set; }
     }

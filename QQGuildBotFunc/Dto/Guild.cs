@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QQGuildBotFunc.Dto.Channels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,6 +70,11 @@ namespace QQGuildBotFunc.Dto
 
         /// <summary>
         /// 频道列表
+        /// </summary>
+        [JsonPropertyName("channels")]
+        public required Channel[] Channels { get; set; }
+
+        /// <summary>
         /// 游戏绑定公会区服ID
         /// </summary>
         [JsonPropertyName("union_world_id")]

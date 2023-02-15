@@ -18,5 +18,11 @@ namespace QQGuildBotFunc.Dto.MessageArks
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("template_id")]
         public int? TemplateID { get; set; }
+        /// <summary>
+        /// ArkKV 数组
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("kv")]
+        public ArkKV? KV { get; set; }
     }
 }

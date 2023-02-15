@@ -24,6 +24,9 @@ namespace QQGuildBotFunc.Dto.Members
         [JsonPropertyName("user")]
         public required User User { get; set; }
 
+        [JsonPropertyName("roles")]
+        public required string[] Roles { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("op_user_id")]
         public string? OpUserID { get; set; }

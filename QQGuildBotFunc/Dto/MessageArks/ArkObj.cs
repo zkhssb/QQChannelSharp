@@ -14,6 +14,6 @@ namespace QQGuildBotFunc.Dto.MessageArks
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("obj_kv")]
-        public ArkObjKV? ObjKV { get; set; }
+        public ArkObjKV[]? ObjKV { get; set; }
     }
 }
