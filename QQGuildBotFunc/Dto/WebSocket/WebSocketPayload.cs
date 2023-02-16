@@ -9,5 +9,7 @@ namespace QQGuildBotFunc.Dto.WebSocket
     {
         [JsonPropertyName("d")]
         public WebSocketDataBase? Data { get; set; }
+        [JsonIgnore]
+        public string RawMessage { get; set; } = string.Empty;
     }
 }
