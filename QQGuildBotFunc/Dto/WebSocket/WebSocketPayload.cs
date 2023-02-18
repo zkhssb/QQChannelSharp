@@ -7,8 +7,9 @@ namespace QQGuildBotFunc.Dto.WebSocket
     /// </summary>
     public class WebSocketPayload : WebSocketPayloadBase
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("d")]
-        public WebSocketDataBase? Data { get; set; }
+        public object? Data { get; set; }
         [JsonIgnore]
         public string RawMessage { get; set; } = string.Empty;
     }

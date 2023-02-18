@@ -7,7 +7,7 @@ namespace QQGuildBotFunc.Dto.WebSocket
     /// <br/>
     /// https://bot.q.qq.com/wiki/develop/api/gateway/reference.html#_2-%E9%89%B4%E6%9D%83%E8%BF%9E%E6%8E%A5
     /// </summary>
-    public class WSReadyData
+    public class WSReadyData : WebSocketDataBase
     {
         /// <summary>
         /// 版本

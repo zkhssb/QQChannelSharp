@@ -14,6 +14,6 @@ namespace QQGuildBotFunc.Dto.WebSocket
         [JsonPropertyName("session_id")]
         public required string SessionID { get; set; }
         [JsonPropertyName("seq")]
-        public required int Seq { get; set; }
+        public required long Seq { get; set; }
     }
 }

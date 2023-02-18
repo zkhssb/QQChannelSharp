@@ -10,8 +10,10 @@ namespace QQGuildBotFunc.Dto.WebSocket
     {
         [JsonPropertyName("op")]
         public OPCode OPCode { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("s")]
         public int Seq { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("t")]
         public string? EventType { get; set; }
     }
