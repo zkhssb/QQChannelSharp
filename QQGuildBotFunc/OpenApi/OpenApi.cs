@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Http;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
+using QQGuildBotFunc.Dto.WebSocket;
 using QQGuildBotFunc.Interfaces;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
@@ -121,6 +122,11 @@ namespace QQGuildBotFunc.OpenApi
         public string Me()
         {
             return _client.Get(new RestRequest("/users/@me")).Content ?? string.Empty;
+        }
+
+        public WebsocketAP GetAp()
+        {
+            return _client.Get<WebsocketAP>(new RestRequest("/gateway/bot"))!;
         }
 
         private RestClientOptions GetRestClientOptions()
