@@ -1,73 +1,97 @@
-﻿using QQGuildBotFunc.Dto.Message;
+﻿using Newtonsoft.Json.Linq;
 using QQGuildBotFunc.Dto.WebSocket;
 using QQGuildBotFunc.Enumerations;
 using QQGuildBotFunc.Exceptions;
 using QQGuildBotFunc.Extensions;
 using QQGuildBotFunc.WebSocket;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Websocket.Client;
 
 namespace QQGuildBotFunc.Client
 {
     public class WsClient : IWebSocketClient
     {
-        private Session _session;
-        private ClientWebSocket? _webSocket;
-        private ChanManager<int> _closeChan;
-        private ChanManager<int> _resumeChan;
-        public ChanManager<string> _messageChan;
-        private CancellationTokenSource? _recvCancellationTokenSource;
-        private CancellationTokenSource? _heartCancellationTokenSource;
-        private Task? _readTask;
-        private Task? _handleTask;
-        private Task? _heartTask;
+        private Task? _heartbeatTask;
+        private readonly Session _session;
+        private int _heartbeatInterval = 60 * 1000; // 默认值,后面会自动设置
+        private byte[] _buffer = new byte[4096]; // _buffer
 
-        // 收到Hello包后会重置
-        private int _heartbeatInterval = 60 * 1000;
         public WsClient(Session session)
         {
             _session = session;
-            _resumeChan = new(1);
-            _closeChan = new(1);
-            _messageChan = new(1);
         }
+
+        private readonly ClientWebSocket _webSocket = new();
+        private readonly CancellationTokenSource _tokenSource = new();
+        private readonly CancellationTokenSource _heartbeatTokenSource = new();
+        /// <summary>
+        /// 启动心跳
+        /// </summary>
+        /// <returns></returns>
+        private async Task StartHeartBeat()
+        {
+            if (_heartbeatTask != null && _heartbeatTask.Status == TaskStatus.WaitingForActivation)
+            {
+                _heartbeatTokenSource.CancelAfter(TimeSpan.FromSeconds(1));
+                await _heartbeatTask; // 等待任务结束
+                _heartbeatTask.Dispose();
+                _heartbeatTask = null;
+            }
+            _heartbeatTask = Task.Run(async () =>
+            {
+                try
+                {
+                    while (!_heartbeatTokenSource.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
+                    {
+                        Write(new WebSocketPayload()
+                        {
+                            OPCode = OPCode.WSHeartbeat,
+                            Data = _session.LastSeq
+                        });
+                        await Task.Delay(_heartbeatInterval, _heartbeatTokenSource.Token);
+                    }
+                }
+                catch (WebSocketException) { } // 连接已经关闭
+                catch (TaskCanceledException) { } // 任务取消
+            });
+        }
+
         public void Close()
         {
-            if (_recvCancellationTokenSource is not null) // 取消读取/处理 (ReadMessage/HandleMessage)
-            {
-                _recvCancellationTokenSource.Cancel();
-                _recvCancellationTokenSource = null;
-            }
-            if (_heartCancellationTokenSource is not null) // 取消心跳
-            {
-                _heartCancellationTokenSource.Cancel();
-                _heartCancellationTokenSource = null;
-            }
-            if (_webSocket is not null && _webSocket.State is WebSocketState.Open)
-            {
-                _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None).Wait();
-            }
+            // 销毁服务
+            Dispose();
         }
-        /// <summary>
-        /// Connect 连接到 websocket
-        /// </summary>
-        /// <exception cref="UrlInvalidException">Session中的Url是空</exception>
+
         public void Connect()
         {
             if (string.IsNullOrWhiteSpace(_session.Url))
                 throw new UrlInvalidException(_session);
-            Close();
-            _webSocket = new();
-            _webSocket.ConnectAsync(new Uri(_session.Url), CancellationToken.None)
-                .Wait();
-            if (_recvCancellationTokenSource is not null)
+            _webSocket.ConnectAsync(new Uri(_session.Url)).Wait();
+        }
+        public void Dispose()
+        {
+            _heartbeatTokenSource.Cancel(); //
+            _heartbeatTokenSource.Dispose();
+            if (null != _heartbeatTask && _heartbeatTask.Status == TaskStatus.WaitingForActivation)
             {
-                _recvCancellationTokenSource.Cancel();
-                _recvCancellationTokenSource.Dispose();
-                _recvCancellationTokenSource = null;
+                _heartbeatTask.Wait();
+                _heartbeatTask.Dispose();
             }
-            _recvCancellationTokenSource = new CancellationTokenSource();
+
+            if (_webSocket.State == WebSocketState.Open)
+                _webSocket
+                    .CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, _tokenSource.Token)
+                    .Wait();
+            _webSocket.Dispose();
+
+            _tokenSource.Cancel();
+            _tokenSource.Dispose();
         }
         public void Identify()
         {
@@ -89,154 +113,109 @@ namespace QQGuildBotFunc.Client
                 }
             });
         }
-        public int Listening()
+        public void Resume()
         {
-            if (_webSocket is null
-                || _webSocket.State != WebSocketState.Open
-                || _recvCancellationTokenSource is null                     // 只要调用了 Connect 就不可能为Null
-                || _recvCancellationTokenSource.IsCancellationRequested)
-                throw new InvalidOperationException();
-            try
+            if (0 == _session.Intent) // 避免传错 intent
+                _session.Intent = (int)Intents.GUILDS;
+            Write(new WebSocketPayload()
             {
-                // 开始读取数据
-                _readTask?.Dispose();
-                _readTask = ReadMessage(_recvCancellationTokenSource.Token);
-
-                // 开始处理数据
-                _handleTask?.Dispose();
-                _handleTask = HandleMessage(_recvCancellationTokenSource.Token);
-
-                // 等待重连请求或连接关闭请求
-                var resumeTask = _resumeChan.ReadAsync();
-                var closeTask = _closeChan.ReadAsync();
-                var completedTask = Task.WaitAny(new Task[]
+                OPCode = OPCode.WSResume,
+                Data = new WSResumeData()
                 {
-                    resumeTask,
-                    closeTask,
-                });
-                switch (completedTask)
-                {
-                    case 0: // resumeTask
-                        return -1;
-                    // throw new NeedReConnectException(_session);
-                    case 1: // closeTask
-                        return closeTask.Result;
-                    //throw new WebSocketClosedException(_session, closeTask.Result);
-                    default:
-                        return 0;
+                    Token = _session.BotInfo.FullToken,
+                    SessionID = _session.Id,
+                    Seq = _session.LastSeq
                 }
-            }
-            finally
-            {
-                Close();
-                _webSocket?.Dispose();
-                _webSocket = null;
-            }
+            });
         }
-        private async Task ReadMessage(CancellationToken token)
+        public async Task<int> ListeningAsync(CancellationToken token)
         {
-            byte[] buffer = new byte[1024];
-            try
+            // 开始监听数据
+            while (!_tokenSource.IsCancellationRequested && !token.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
             {
-                while (_webSocket is not null
-                    && _webSocket.State == WebSocketState.Open
-                    && !token.IsCancellationRequested)
+                try
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (MemoryStream ms = new())
                     {
                         while (true)
                         {
-                            var result = await _webSocket.ReceiveAsync(buffer, _recvCancellationTokenSource?.Token ?? CancellationToken.None);
-                            if (result.MessageType == WebSocketMessageType.Text)
+                            var receiveResult = await _webSocket.ReceiveAsync(_buffer, token);
+                            if (receiveResult.Count >= 0)
                             {
-                                ms.Write(buffer, 0, result.Count);
-                            }
-                            else if (result.MessageType == WebSocketMessageType.Close)
-                            {
-                                if (result.CloseStatus is not null)
+                                if (receiveResult.MessageType == WebSocketMessageType.Text)
                                 {
-                                    int value = (int)result.CloseStatus.Value;
-                                    if (value == 4009) // 4009	连接过期，请重连并执行 resume 进行重新连接
-                                        await _resumeChan.WriteAsync(4009, token);
-                                    else
-                                        await _closeChan.WriteAsync((int)result.CloseStatus.Value, token);
+                                    ms.Write(_buffer, 0, receiveResult.Count);
                                 }
-                                else
-                                    await _closeChan.WriteAsync(-1, token);
-                                return;
                             }
-                            if (result.EndOfMessage)
+                            if (receiveResult.EndOfMessage)
                                 break;
                         }
-                        await _messageChan.WriteAsync(Encoding.UTF8.GetString(ms.ToArray()), token);
-                        //await HandleMessage(Encoding.UTF8.GetString(ms.ToArray()));
-                        //Console.WriteLine("WS: {0}", Encoding.UTF8.GetString(ms.ToArray()));
+                        if (HandleMessage(Encoding.UTF8.GetString(ms.ToArray())))
+                            return 4009; // 如果处理消息返回True 那么就是收到了需要重连的消息
                     }
                 }
+                catch (WebSocketException ex)
+                {
+                    return ex.ErrorCode;
+                }
+                catch (TaskCanceledException)
+                {
+                    return -1; // 任务已取消
+                }
             }
-            catch (WebSocketException e)
-            {
-                await _resumeChan.WriteAsync(e.ErrorCode, token);
-                return;
-            }
+            return 0; // 已取消 or 连接已断开但是不知道原因
         }
-        /// <summary>
-        /// 内部消息处理
-        /// </summary>
-        private async Task HandleMessage(CancellationToken token)
+
+        public Session Session()
+            => _session;
+
+        public void Write(WebSocketPayload payload)
         {
+            string dataJson = JsonSerializer.Serialize(payload);
             try
             {
-                while (!token.IsCancellationRequested)
-                {
-                    string message = await _messageChan.ReadAsync();
-                    if (string.IsNullOrWhiteSpace(message))
-                        return;
-                    Console.WriteLine("{0}_WS: {1}", _session.Id, message);
-                    WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message)
-                        ?? throw new ArgumentException("无法解析Payload");
-                    payload.RawMessage = message;
-                    SaveSeq(payload.Seq);
-                    switch (payload.OPCode)
-                    {
-                        case OPCode.WSDispatchEvent:
-                            HandleDispatch(payload);
-                            break;
-                        case OPCode.WSHeartbeat:
-                            break;
-                        case OPCode.WSIdentity:
-                            break;
-                        case OPCode.WSResume:
-                            break;
-                        case OPCode.WSReconnect:
-                            Close();
-                            await _resumeChan.WriteAsync(4009); // 立刻进行重连
-                            break;
-                        case OPCode.WSInvalidSession:
-                            break;
-                        case OPCode.WSHello:
-                            WSHelloData helloData = payload.GetData<WSHelloData>();
-                            _heartbeatInterval = helloData.HeartbeatInterval;
+                _webSocket
+                    .SendAsync(Encoding.UTF8.GetBytes(dataJson), WebSocketMessageType.Text, true, _tokenSource.Token)
+                    .Wait();
+            }
+            catch (TaskCanceledException) { }
+            Console.WriteLine("SEND: {0}", dataJson);
+        }
 
-                            // 重置心跳
-                            _heartCancellationTokenSource?.Cancel();
-                            _heartCancellationTokenSource?.Dispose();
-                            _heartCancellationTokenSource = new();
-                            _heartTask?.Dispose();
-                            _heartTask = HeartBeat(_heartCancellationTokenSource.Token);
-                            break;
-                        case OPCode.WSHeartbeatAck:
-                            break;
-                        case OPCode.HTTPCallbackAck:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            catch (OperationCanceledException)
+        /// <summary>
+        /// 处理内部消息
+        /// </summary>
+        /// <param name="msg">消息纯文本</param>
+        /// <returns>如果需要关闭连接,则返回True</returns>
+        private bool HandleMessage(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+                return false;
+            Console.WriteLine("{0}_WS: {1}", _session.Id, message);
+            WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message)
+                ?? throw new ArgumentException("无法解析Payload");
+            payload.RawMessage = message;
+            SaveSeq(payload.Seq);
+            switch (payload.OPCode)
             {
+                case OPCode.WSDispatchEvent:
+                    HandleDispatch(payload);
+                    break;
+                case OPCode.WSHello:
+                    WSHelloData helloData = payload.GetData<WSHelloData>();
+                    _heartbeatInterval = helloData.HeartbeatInterval;
+                    StartHeartBeat().Wait(); // 启动心跳
+                    break;
+                default:
+                    break;
             }
+            return false;
+        }
+
+        private void SaveSeq(int seq)
+        {
+            if (seq > 0)
+                _session.LastSeq = seq;
         }
         private void HandleDispatch(WebSocketPayload payload)
         {
@@ -253,57 +232,6 @@ namespace QQGuildBotFunc.Client
                     break;
             }
         }
-        private async Task HeartBeat(CancellationToken token)
-        {
-            try
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    token.ThrowIfCancellationRequested();
-                    Write(new WebSocketPayload()
-                    {
-                        OPCode = OPCode.WSHeartbeat,
-                        Data = _session.LastSeq
-                    });
-                    await Task.Delay(_heartbeatInterval, token);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }
-        private void SaveSeq(int seq)
-        {
-            if (seq > 0)
-                _session.LastSeq = seq;
-        }
-        public void Resume()
-        {
-            if (0 == _session.Intent) // 避免传错 intent
-                _session.Intent = (int)Intents.GUILDS;
-            Write(new WebSocketPayload()
-            {
-                OPCode = OPCode.WSResume,
-                Data = new WSResumeData()
-                {
-                    Token = _session.BotInfo.FullToken,
-                    SessionID = _session.Id,
-                    Seq = _session.LastSeq
-                }
-            });
-        }
-        public Session Session()
-            => _session;
-        public void Write(WebSocketPayload payload)
-        {
-            string dataJson = JsonSerializer.Serialize(payload);
-            Console.WriteLine("SEND: {0}", dataJson);
-            if (_webSocket is not null)
-                _webSocket.SendAsync(Encoding.UTF8.GetBytes(dataJson), WebSocketMessageType.Text, true, CancellationToken.None).Wait();
-        }
-        public void Dispose()
-        {
-            Close();
-        }
+
     }
 }
