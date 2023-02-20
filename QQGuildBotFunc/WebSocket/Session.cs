@@ -11,6 +11,7 @@ namespace QQGuildBotFunc.WebSocket
     /// </summary>
     public class Session
     {
+        public required Guid Guid { get; init; }
         public required ShardConfig Shard { get; set; }
         public required string Id { get; set; }
         public required string Url { get; set; }

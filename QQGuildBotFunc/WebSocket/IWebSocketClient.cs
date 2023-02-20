@@ -23,7 +23,7 @@ namespace QQGuildBotFunc.WebSocket
         /// <summary>
         /// Listening 监听websocket事件
         /// </summary>
-        int Listening();
+        Task<int> ListeningAsync(CancellationToken token);
         /// <summary>
         /// Write 发送数据
         /// </summary>
