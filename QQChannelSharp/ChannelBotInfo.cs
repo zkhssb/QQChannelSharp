@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace QQChannelSharp
 {
-    public partial class GuildBotInfo
+    public partial class ChannelBotInfo
     {
         #region 公开成员
         /// <summary>
@@ -33,18 +33,18 @@ namespace QQChannelSharp
         }
         #endregion
         #region 构造函数
-        public GuildBotInfo(string appId, string token, int intents, bool sandBox)
+        public ChannelBotInfo(string appId, string token, int intents, bool sandBox)
         {
             AppId = appId;
             Token = token;
             Intents = intents;
             SandBox = sandBox;
         }
-        public GuildBotInfo(string appId, string token) : this(appId, token, (int)Enumerations.Intents.GUILDS, false)
+        public ChannelBotInfo(string appId, string token) : this(appId, token, (int)Enumerations.Intents.GUILDS, false)
         {
 
         }
-        public GuildBotInfo(string appId, string token, bool sandBox) : this(appId, token, (int)Enumerations.Intents.GUILDS, sandBox)
+        public ChannelBotInfo(string appId, string token, bool sandBox) : this(appId, token, (int)Enumerations.Intents.GUILDS, sandBox)
         {
 
         }
@@ -53,8 +53,8 @@ namespace QQChannelSharp
         /// 带有intents
         /// </summary>
         /// <param name="intents"><see cref="Intents"/>列表</param>
-        /// <returns>添加完intents的<see cref="GuildBotInfo"/></returns>
-        public GuildBotInfo WithIntents(IEnumerable<Intents> intents)
+        /// <returns>添加完intents的<see cref="ChannelBotInfo"/></returns>
+        public ChannelBotInfo WithIntents(IEnumerable<Intents> intents)
         {
             foreach (Intents intent in intents)
             {
