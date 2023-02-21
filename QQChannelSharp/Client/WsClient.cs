@@ -11,7 +11,9 @@ namespace QQChannelSharp.Client
 {
     public class WsClient : IWebSocketClient
     {
+        private bool _disposed;
         private Task? _heartbeatTask;
+        private Task? _listeningTask;
         private readonly Session _session;
         private int _heartbeatInterval = 60 * 1000; // 默认值,后面会自动设置
         private byte[] _buffer = new byte[4096]; // _buffer
@@ -24,6 +26,9 @@ namespace QQChannelSharp.Client
         private readonly ClientWebSocket _webSocket = new();
         private readonly CancellationTokenSource _tokenSource = new();
         private readonly CancellationTokenSource _heartbeatTokenSource = new();
+
+        public event WebSocketClosedAsyncCallBack? ClientClosed;
+
         /// <summary>
         /// 启动心跳
         /// </summary>
@@ -52,16 +57,17 @@ namespace QQChannelSharp.Client
                     }
                 }
                 catch (WebSocketException) { } // 连接已经关闭
-                catch (TaskCanceledException) { } // 任务取消
+                catch (TaskCanceledException ex)
+                {
+                    ex.Task?.Dispose(); // 如果有Task,则必须销毁,否则TaskCanceledException会一直引用Task导致内存泄漏
+                } // 任务取消
             });
         }
-
         public void Close()
         {
             // 销毁服务
             Dispose();
         }
-
         public void Connect()
         {
             if (string.IsNullOrWhiteSpace(_session.Url))
@@ -70,22 +76,33 @@ namespace QQChannelSharp.Client
         }
         public void Dispose()
         {
-            _heartbeatTokenSource.Cancel(); //
-            _heartbeatTokenSource.Dispose();
-            if (null != _heartbeatTask && _heartbeatTask.Status == TaskStatus.WaitingForActivation)
+            if (!_disposed)
             {
-                _heartbeatTask.Wait();
-                _heartbeatTask.Dispose();
+                _disposed = true;
+                _tokenSource.Cancel();
+
+
+                if (_webSocket.State == WebSocketState.Open)
+                    _webSocket
+                        .CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None)
+                        .Wait();
+
+                _webSocket.Dispose();
+
+                _heartbeatTokenSource.Cancel();
+                if (null != _heartbeatTask && _heartbeatTask.Status == TaskStatus.WaitingForActivation)
+                {
+                    _heartbeatTask.Wait();
+                }
+
+                ClientClosed?.Invoke(_session, -1);
+
+                //_listeningTask?.Dispose();
+                _heartbeatTask?.Dispose();
+                _heartbeatTokenSource.Dispose();
+                _tokenSource.Dispose();
+                GC.SuppressFinalize(this);
             }
-
-            if (_webSocket.State == WebSocketState.Open)
-                _webSocket
-                    .CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, _tokenSource.Token)
-                    .Wait();
-            _webSocket.Dispose();
-
-            _tokenSource.Cancel();
-            _tokenSource.Dispose();
         }
         public void Identify()
         {
@@ -122,42 +139,54 @@ namespace QQChannelSharp.Client
                 }
             });
         }
-        public async Task<int> ListeningAsync(CancellationToken token)
+        public void Listening()
         {
+            if (_listeningTask != null)
+                throw new InvalidOperationException(); // _listeningTask已经启动
+            _listeningTask = ListeningAsync();
+        }
+        private async Task ListeningAsync()
+        {
+            int errorCode = -1;
             // 开始监听数据
-            while (!_tokenSource.IsCancellationRequested && !token.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
+            while (!_tokenSource.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
             {
                 try
                 {
-                    using (MemoryStream ms = new())
+                    using MemoryStream ms = new();
+                    while (true)
                     {
-                        while (true)
+                        var receiveResult = await _webSocket.ReceiveAsync(_buffer, _tokenSource.Token);
+                        _tokenSource.Token.ThrowIfCancellationRequested();
+                        if (receiveResult.Count >= 0)
                         {
-                            var receiveResult = await _webSocket.ReceiveAsync(_buffer, token);
-                            if (receiveResult.Count >= 0)
+                            if (receiveResult.MessageType == WebSocketMessageType.Text)
                             {
-                                if (receiveResult.MessageType == WebSocketMessageType.Text)
-                                {
-                                    ms.Write(_buffer, 0, receiveResult.Count);
-                                }
+                                ms.Write(_buffer, 0, receiveResult.Count);
                             }
-                            if (receiveResult.EndOfMessage)
-                                break;
                         }
-                        if (HandleMessage(Encoding.UTF8.GetString(ms.ToArray())))
-                            return 4009; // 如果处理消息返回True 那么就是收到了需要重连的消息
+                        if (receiveResult.EndOfMessage)
+                            break;
+                    }
+                    if (HandleMessage(Encoding.UTF8.GetString(ms.ToArray())))
+                    {
+                        errorCode = 4009; // 如果处理消息返回True 那么就是收到了需要重连的消息
+                        ClientClosed?.Invoke(_session, errorCode); // 通知后退出
+                        return;
                     }
                 }
                 catch (WebSocketException ex)
                 {
-                    return ex.ErrorCode;
+                    errorCode = ex.ErrorCode;
+                    break; // 跳出While
                 }
-                catch (TaskCanceledException)
+                catch (TaskCanceledException ex)
                 {
-                    return -1; // 任务已取消
+                    ex.Task?.Dispose(); // 如果有Task,则必须销毁,否则TaskCanceledException会一直引用Task导致内存泄漏
+                    break; // 任务已取消, 跳出While
                 }
             }
-            return 0; // 已取消 or 连接已断开但是不知道原因
+            ClientClosed?.Invoke(_session, errorCode); // 已取消 or 连接已断开但是不知道原因
         }
 
         public Session Session()
@@ -192,6 +221,8 @@ namespace QQChannelSharp.Client
             SaveSeq(payload.Seq);
             switch (payload.OPCode)
             {
+                case OPCode.WSReconnect:
+                    return true; // 返回True,断开连接并重连
                 case OPCode.WSDispatchEvent:
                     HandleDispatch(payload);
                     break;
