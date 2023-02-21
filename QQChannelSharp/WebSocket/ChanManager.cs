@@ -9,7 +9,8 @@ namespace QQChannelSharp.WebSocket
     {
         private readonly Channel<T> _channel;
         private bool _disposed;
-
+        public Channel<T> ObjChannel
+            => _channel;
         public override int GetHashCode()
         {
             return _channel.GetHashCode();

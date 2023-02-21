@@ -2,8 +2,13 @@
 
 namespace QQChannelSharp.WebSocket
 {
+    /// <summary>
+    /// WebSocket连接关闭异步回调
+    /// </summary>
+    public delegate Task WebSocketClosedAsyncCallBack(Session session, int closeCode);
     public interface IWebSocketClient : IDisposable
     {
+        event WebSocketClosedAsyncCallBack ClientClosed;
         /// <summary>
         /// Connect 连接到 wss 地址
         /// </summary>
@@ -23,7 +28,7 @@ namespace QQChannelSharp.WebSocket
         /// <summary>
         /// Listening 监听websocket事件
         /// </summary>
-        Task<int> ListeningAsync(CancellationToken token);
+        void Listening();
         /// <summary>
         /// Write 发送数据
         /// </summary>
