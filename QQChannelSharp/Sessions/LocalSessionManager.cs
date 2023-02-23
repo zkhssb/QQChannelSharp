@@ -124,9 +124,9 @@ namespace QQChannelSharp.Sessions
                 {
                     wsClient.Connect();
                     if (string.IsNullOrWhiteSpace(session.Id))
-                        wsClient.Identify(); // sessionId为空, 尝试鉴权
+                        await wsClient.IdentifyAsync(); // sessionId为空, 尝试鉴权
                     else
-                        wsClient.Resume(); // sessionId不为空, 尝试重连
+                        await wsClient.ResumeAsync(); // sessionId不为空, 尝试重连
                     wsClient.Listening(); // 开始监听并处理消息
                 }
                 catch (WebSocketException ex)

@@ -42,12 +42,23 @@ namespace QQChannelSharp.Client
                 while (!_heartbeatTokenSource.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
                 {
                     payload.Data = _session.LastSeq;
-                    Write(payload);
-                    await Task.Delay(_heartbeatInterval, _heartbeatTokenSource.Token);
+                    await WriteAsync(payload);
+                    if (!_heartbeatTokenSource.Token.IsCancellationRequested)
+                    {
+                        await Task.Delay(_heartbeatInterval);
+                        if (_heartbeatTokenSource.Token.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             catch (WebSocketException) { } // 连接已经关闭
-            catch (TaskCanceledException)
+            catch (TaskCanceledException ex)
             {
                 //ex.Task?.Dispose(); // 如果有Task,则必须销毁,否则TaskCanceledException会一直引用Task导致内存泄漏
                 //Console.WriteLine(ex.ToString());
@@ -118,11 +129,11 @@ namespace QQChannelSharp.Client
                 GC.SuppressFinalize(this);
             }
         }
-        public void Identify()
+        public async Task IdentifyAsync()
         {
             if (0 == _session.Intent) // 避免传错 intent
                 _session.Intent = (int)Intents.GUILDS;
-            Write(new WebSocketPayload()
+            await WriteAsync(new WebSocketPayload()
             {
                 OPCode = OPCode.WSIdentity,
                 Data = new WSIdentityData()
@@ -138,11 +149,11 @@ namespace QQChannelSharp.Client
                 }
             });
         }
-        public void Resume()
+        public async Task ResumeAsync()
         {
             if (0 == _session.Intent) // 避免传错 intent
                 _session.Intent = (int)Intents.GUILDS;
-            Write(new WebSocketPayload()
+            await WriteAsync(new WebSocketPayload()
             {
                 OPCode = OPCode.WSResume,
                 Data = new WSResumeData()
@@ -209,18 +220,17 @@ namespace QQChannelSharp.Client
         public Session Session()
             => _session;
 
-        public void Write(WebSocketPayload payload)
+        public async Task WriteAsync(WebSocketPayload payload)
         {
             string dataJson = JsonSerializer.Serialize(payload);
             try
             {
-                _webSocket
-                    .SendAsync(Encoding.UTF8.GetBytes(dataJson), WebSocketMessageType.Text, true, CancellationToken.None)
-                    .Wait();
+                await _webSocket
+                    .SendAsync(Encoding.UTF8.GetBytes(dataJson), WebSocketMessageType.Text, true, CancellationToken.None);
             }
-            catch (TaskCanceledException)
+            catch (TaskCanceledException ex)
             {
-                //ex.Task?.Dispose();
+                ex.Task?.Dispose();
             }
             Console.WriteLine("SEND: {0}", dataJson);
         }
