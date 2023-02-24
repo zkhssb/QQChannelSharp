@@ -43,26 +43,10 @@ namespace QQChannelSharp.Client
                 {
                     payload.Data = _session.LastSeq;
                     await WriteAsync(payload);
-                    if (!_heartbeatTokenSource.Token.IsCancellationRequested)
-                    {
-                        await Task.Delay(_heartbeatInterval);
-                        if (_heartbeatTokenSource.Token.IsCancellationRequested)
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    await Task.Delay(_heartbeatInterval);
                 }
             }
             catch (WebSocketException) { } // 连接已经关闭
-            catch (TaskCanceledException ex)
-            {
-                //ex.Task?.Dispose(); // 如果有Task,则必须销毁,否则TaskCanceledException会一直引用Task导致内存泄漏
-                //Console.WriteLine(ex.ToString());
-            } // 任务取消
         }
 
         /// <summary>
@@ -115,15 +99,18 @@ namespace QQChannelSharp.Client
                 _webSocket.Dispose();
 
                 _heartbeatTokenSource.Cancel();
+
+                /*
                 if (null != _heartbeatTask && _heartbeatTask.Status == TaskStatus.WaitingForActivation)
                 {
                     _heartbeatTask.Wait();
-                }
+                } // 任务结束自己会释放
 
                 ClientClosed?.Invoke(_session, -1);
+                */
 
-                //_listeningTask?.Dispose();
-                _heartbeatTask?.Dispose();
+                //_listeningTask?.Dispose(); // 任务结束自己会释放
+                //_heartbeatTask?.Dispose(); // 任务结束自己会释放
                 _heartbeatTokenSource.Dispose();
                 _tokenSource.Dispose();
                 GC.SuppressFinalize(this);
