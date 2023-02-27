@@ -1,9 +1,14 @@
-﻿using QQChannelSharp.Dto.WebSocket;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Audio;
+using QQChannelSharp.Dto.Channels;
+using QQChannelSharp.Dto.Forum;
+using QQChannelSharp.Dto.Interactions;
+using QQChannelSharp.Dto.Members;
+using QQChannelSharp.Dto.Message;
+using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
-using QQChannelSharp.Interfaces;
+using QQChannelSharp.Extensions;
 using QQChannelSharp.WebSocket;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace QQChannelSharp.Events
 {
@@ -24,7 +29,6 @@ namespace QQChannelSharp.Events
         /// 事件解析
         /// </summary>
         private readonly Dictionary<OPCode, Dictionary<string, AsyncEventHandlerFunction>> _eventParseFunc;
-        private readonly IAsyncEventHandler _handler;
 
         public event ErrorNotifyHandler? ErrorNotify;
         public event PlainEventHandler? PlainEvent;
@@ -48,7 +52,6 @@ namespace QQChannelSharp.Events
 
         public AsyncEventBus()
         {
-            _handler = new AsyncEventHandler(this);
             _eventParseFunc = new()
             {
                 {
@@ -58,145 +61,145 @@ namespace QQChannelSharp.Events
                         // 频道
                         {
                             "GUILD_CREATE",
-                            _handler.GuildHandler
+                            GuildHandler
                         },
                         {
                             "GUILD_UPDATE",
-                            _handler.GuildHandler
+                            GuildHandler
                         },
                         {
                             "GUILD_DELETE",
-                            _handler.GuildHandler
+                            GuildHandler
                         },
                         // 子频道
                         {
                             "CHANNEL_CREATE",
-                            _handler.ChannelHandler
+                            ChannelHandler
                         },
                         {
                             "CHANNEL_UPDATE",
-                            _handler.ChannelHandler
+                            ChannelHandler
                         },
                         {
                             "CHANNEL_DELETE",
-                            _handler.ChannelHandler
+                            ChannelHandler
                         },
                         // 频道成员
                         {
                             "GUILD_MEMBER_ADD",
-                            _handler.GuildMemberHandler
+                            GuildMemberHandler
                         },
                         {
                             "GUILD_MEMBER_UPDATE",
-                            _handler.GuildMemberHandler
+                            GuildMemberHandler
                         },
                         {
                             "GUILD_MEMBER_REMOVE",
-                            _handler.GuildMemberHandler
+                            GuildMemberHandler
                         },
                         // 私域消息
                         {
                             "MESSAGE_CREATE",
-                            _handler.MessageHandler
+                            MessageHandler
                         },
                         {
                             "MESSAGE_DELETE",
-                            _handler.MessageDeleteHandler
+                            MessageDeleteHandler
                         },
                         // 消息_其他
                         {
                             "MESSAGE_REACTION_ADD",
-                            _handler.MessageReactionHandler
+                            MessageReactionHandler
                         },
                         {
                             "MESSAGE_REACTION_REMOVE",
-                            _handler.MessageReactionHandler
+                            MessageReactionHandler
                         },
                         // 公域&私域 消息
                         {
                             "AT_MESSAGE_CREATE",
-                            _handler.AtMessageHandler
+                            AtMessageHandler
                         },
                         {
                             "PUBLIC_MESSAGE_DELETE",
-                            _handler.PublicMessageDeleteHandler
+                            PublicMessageDeleteHandler
                         },
                         // 私信
                         {
                             "DIRECT_MESSAGE_CREATE",
-                            _handler.DirectMessageHandler
+                            DirectMessageHandler
                         },
                         {
                             "DIRECT_MESSAGE_DELETE",
-                            _handler.DirectMessageHandler
+                            DirectMessageHandler
                         },
                         // 音频
                         {
                             "AUDIO_START",
-                            _handler.AudioHandler
+                            AudioHandler
                         },
                         {
                             "AUDIO_FINISH",
-                            _handler.AudioHandler
+                            AudioHandler
                         },
                         {
                             "AUDIO_ON_MIC",
-                            _handler.AudioHandler
+                            AudioHandler
                         },
                         {
                             "AUDIO_OFF_MIC",
-                            _handler.AudioHandler
+                            AudioHandler
                         },
                         // 消息审核
                         {
                             "MESSAGE_AUDIT_PASS",
-                            _handler.MessageAuditHandler
+                            MessageAuditHandler
                         },
                         {
                             "MESSAGE_AUDIT_REJECT",
-                            _handler.MessageAuditHandler
+                            MessageAuditHandler
                         },
                         // 帖子
                         // 主题
                         {
                             "FORUM_THREAD_CREATE",
-                            _handler.ThreadHandler
+                            ThreadHandler
                         },
                         {
                             "FORUM_THREAD_UPDATE",
-                            _handler.ThreadHandler
+                            ThreadHandler
                         },
                         {
                             "FORUM_THREAD_DELETE",
-                            _handler.ThreadHandler
+                            ThreadHandler
                         },
                         // 帖子
                         {
                             "FORUM_POST_CREATE",
-                            _handler.PostHandler
+                            PostHandler
                         },
                         {
                             "FORUM_POST_DELETE",
-                            _handler.PostHandler
+                            PostHandler
                         },
                         // 帖子回复
                         {
                             "FORUM_REPLY_CREATE",
-                            _handler.ReplyHandler
+                            ReplyHandler
                         },
                         {
                             "FORUM_REPLY_DELETE",
-                            _handler.ReplyHandler
+                            ReplyHandler
                         },
                         // 论坛审核
                         {
                             "FORUM_PUBLISH_AUDIT_RESULT",
-                            _handler.ForumAuditHandler
+                            ForumAuditHandler
                         },
                         // 其他
                         {
                             "INTERACTION_CREATE",
-                            _handler.InteractionHandler
+                            InteractionHandler
                         }
                     }
                 }
@@ -215,17 +218,8 @@ namespace QQChannelSharp.Events
             }
             else // 如果没有就通知普通消息事件
             {
-                await _handler.PlainEventHandler(payload, session);
+                await PlainEventHandler(payload, session);
             }
-        }
-
-        public void Subscribe()
-        {
-        }
-
-        public void Unsubscribe()
-        {
-
         }
 
         public void Dispose()
@@ -235,6 +229,120 @@ namespace QQChannelSharp.Events
                 _disposed = true;
                 _eventParseFunc.Clear();
             }
+        }
+
+
+        private async Task PlainEventHandler(WebSocketPayload payload, Session session)
+        {
+            if (PlainEvent != null)
+                await PlainEvent.Invoke(payload, session);
+        }
+
+        private async Task ErrorNotifyHandler(WebSocketPayload payload, Session session)
+        {
+            if (ErrorNotify != null)
+                await ErrorNotify.Invoke(new(), session);
+        }
+
+        private Task ReadyHandler(WebSocketPayload payload, Session session)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task GuildHandler(WebSocketPayload payload, Session session)
+        {
+            if (GuildEvent != null)
+                await GuildEvent.Invoke(payload, payload.GetData<Guild>(), session);
+        }
+
+        private async Task ChannelHandler(WebSocketPayload payload, Session session)
+        {
+            if (ChannelEvent != null)
+                await ChannelEvent.Invoke(payload, payload.GetData<Channel>(), session);
+        }
+
+        private async Task GuildMemberHandler(WebSocketPayload payload, Session session)
+        {
+            if (GuildMemberEvent != null)
+                await GuildMemberEvent.Invoke(payload, payload.GetData<Member>(), session);
+        }
+
+        private async Task MessageHandler(WebSocketPayload payload, Session session)
+        {
+            if (MessageEvent != null)
+                await MessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+        }
+
+        private async Task MessageDeleteHandler(WebSocketPayload payload, Session session)
+        {
+            if (MessageDeleteEvent != null)
+                await MessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
+        }
+
+        private async Task MessageReactionHandler(WebSocketPayload payload, Session session)
+        {
+            if (MessageReactionEvent != null)
+                await MessageReactionEvent.Invoke(payload, payload.GetData<MessageReaction>(), session);
+        }
+
+        private async Task AtMessageHandler(WebSocketPayload payload, Session session)
+        {
+            if (ATMessageEvent != null)
+                await ATMessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+        }
+
+        private async Task PublicMessageDeleteHandler(WebSocketPayload payload, Session session)
+        {
+            if (PublicMessageDeleteEvent != null)
+                await PublicMessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
+        }
+
+        private async Task DirectMessageHandler(WebSocketPayload payload, Session session)
+        {
+            if (DirectMessageEvent != null)
+                await DirectMessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+        }
+
+        private async Task AudioHandler(WebSocketPayload payload, Session session)
+        {
+            if (AudioEvent != null)
+                await AudioEvent.Invoke(payload, payload.GetData<AudioAction>(), session);
+        }
+
+        private async Task MessageAuditHandler(WebSocketPayload payload, Session session)
+        {
+            if (MessageAuditEvent != null)
+                await MessageAuditEvent.Invoke(payload, payload.GetData<MessageAudit>(), session);
+        }
+
+        private async Task ThreadHandler(WebSocketPayload payload, Session session)
+        {
+            if (ThreadEvent != null)
+                await ThreadEvent.Invoke(payload, payload.GetData<Dto.Forum.Thread>(), session);
+        }
+
+        private async Task PostHandler(WebSocketPayload payload, Session session)
+        {
+            if (PostEvent != null)
+                await PostEvent.Invoke(payload, payload.GetData<Post>(), session);
+        }
+
+        private async Task ReplyHandler(WebSocketPayload payload, Session session)
+        {
+            if (ReplyEvent != null)
+                await ReplyEvent.Invoke(payload, payload.GetData<Reply>(), session);
+        }
+
+        private async Task ForumAuditHandler(WebSocketPayload payload, Session session)
+        {
+            if (ForumAuditEvent != null)
+                await ForumAuditEvent.Invoke(payload, payload.GetData<ForumAuditResult>(), session);
+        }
+
+        private async Task InteractionHandler(WebSocketPayload payload, Session session)
+        {
+            if (InteractionEvent != null)
+                await InteractionEvent.Invoke(payload, payload.GetData<Interaction>(), session);
         }
     }
 }
