@@ -13,7 +13,6 @@ namespace QQChannelSharp.Extensions
         /// <exception cref="ArgumentNullException">payload.Data is <see langword="null"/></exception>
         /// <exception cref="ArgumentException">payload.Data is not <see langword="JsonElement"/></exception>
         public static TData GetData<TData>(this WebSocketPayload payload)
-            where TData : WebSocketDataBase
         {
             if (payload.Data is null)
                 throw new ArgumentNullException(nameof(payload));
