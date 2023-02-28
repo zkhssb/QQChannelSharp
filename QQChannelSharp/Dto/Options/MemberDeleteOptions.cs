@@ -1,27 +1,27 @@
 ﻿using QQChannelSharp.Enumerations;
 using System.Text.Json.Serialization;
 
-namespace QQChannelSharp.Dto.Members
+namespace QQChannelSharp.Dto.Options
 {
     /// <summary>
-    /// 删除成员额外参数
+    /// 删除成员选项
     /// </summary>
-    public class MemberDeleteOpts
+    public class MemberDeleteOptions
     {
         /// <summary>
-        /// 加入黑名单
+        /// 将当前成员同时添加到频道黑名单中
         /// </summary>
         [JsonPropertyName("add_blacklist")]
-        public bool AddBlackList { get; set; } = false;
+        public bool AddBlackList { get; set; }
         /// <summary>
         /// 删除消息天数
         /// </summary>
         [JsonPropertyName("delete_history_msg_days")]
         public DeleteHistoryMsgDay DeleteHistoryMsgDays { get; set; } = DeleteHistoryMsgDay.NoDelete;
         /// <summary>
-        /// 是否加入黑名单
+        /// 将当前成员同时添加到频道黑名单中
         /// </summary>
-        public MemberDeleteOpts WithAddBlackList(bool addBlackList)
+        public MemberDeleteOptions WithAddBlackList(bool addBlackList)
         {
             AddBlackList = addBlackList;
             return this;
@@ -29,7 +29,7 @@ namespace QQChannelSharp.Dto.Members
         /// <summary>
         /// 删除范围内消息
         /// </summary>
-        public MemberDeleteOpts WithDeleteHistoryMsg(DeleteHistoryMsgDay deleteHistoryMsgDays)
+        public MemberDeleteOptions WithDeleteHistoryMsg(DeleteHistoryMsgDay deleteHistoryMsgDays)
         {
             DeleteHistoryMsgDays = deleteHistoryMsgDays;
             return this;
