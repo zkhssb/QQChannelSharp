@@ -2,7 +2,7 @@
 
 namespace QQChannelSharp.Dto.Keyboard
 {
-    internal class Button
+    public class Button
     {
         /// <summary>
         /// 按钮 ID
