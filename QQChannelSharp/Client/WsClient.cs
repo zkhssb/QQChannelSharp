@@ -6,6 +6,7 @@ using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace QQChannelSharp.Client
 {
@@ -30,6 +31,7 @@ namespace QQChannelSharp.Client
 
         public event WebSocketClosedAsyncCallBack? ClientClosed;
         public event PayloadReceivedAsyncCallBack? Received;
+        public event WebSocketErrorAsyncCallBack? Error;
 
         private async Task HeartBeatTask()
         {
@@ -190,6 +192,9 @@ namespace QQChannelSharp.Client
                 }
                 catch (WebSocketException ex)
                 {
+                    if (null != Error)
+                        await Error(_session, ex);
+
                     errorCode = ex.ErrorCode;
                     break; // 跳出While
                 }

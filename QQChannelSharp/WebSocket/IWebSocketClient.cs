@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using System.Net.WebSockets;
 
 namespace QQChannelSharp.WebSocket
 {
@@ -6,11 +7,13 @@ namespace QQChannelSharp.WebSocket
     /// WebSocket连接关闭异步回调
     /// </summary>
     public delegate Task WebSocketClosedAsyncCallBack(Session session, int closeCode);
+    public delegate Task WebSocketErrorAsyncCallBack(Session session, WebSocketException error);
     public delegate Task PayloadReceivedAsyncCallBack(Session session, WebSocketPayload payload);
     public interface IWebSocketClient : IDisposable
     {
         event WebSocketClosedAsyncCallBack ClientClosed;
         event PayloadReceivedAsyncCallBack Received;
+        event WebSocketErrorAsyncCallBack Error;
         /// <summary>
         /// Connect 连接到 wss 地址
         /// </summary>

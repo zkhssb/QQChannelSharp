@@ -1,5 +1,6 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.WebSocket;
+using System.Net.WebSockets;
 
 namespace QQChannelSharp.Events
 {
@@ -94,5 +95,9 @@ namespace QQChannelSharp.Events
         /// 推送事件
         /// </summary>
         Task PublishAsync(WebSocketPayload payload, Session session);
+        /// <summary>
+        /// 推送WebSocket错误
+        /// </summary>
+        Task PublishWebSocketErrorAsync(Session session, WebSocketException ex);
     }
 }

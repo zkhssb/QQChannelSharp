@@ -86,6 +86,7 @@ namespace QQChannelSharp.Sessions
                     {
                         sessionInfo.Client.ClientClosed -= OnWebSocketClosed; // 注销任务
                         sessionInfo.Client.Received -= OnReceived; // 注销任务
+                        sessionInfo.Client.Error -= OnWebSocketError; // 注销任务
                         sessionInfo.Client.Dispose(); // 销毁原来的客户端
                         _sessionTasks.Remove(session.Guid); // 从字典中删除这个任务
                         return true;
@@ -135,6 +136,7 @@ namespace QQChannelSharp.Sessions
                 IWebSocketClient wsClient = new WsClient(session);
                 wsClient.ClientClosed += OnWebSocketClosed;
                 wsClient.Received += OnReceived;
+                wsClient.Error += OnWebSocketError;
                 try
                 {
                     wsClient.Connect();
@@ -150,6 +152,7 @@ namespace QQChannelSharp.Sessions
 
                     wsClient.ClientClosed -= OnWebSocketClosed;
                     wsClient.Received -= OnReceived;
+                    wsClient.Error -= OnWebSocketError;
                     wsClient.Dispose();
                     await _sessionChan.WriteAsync(session); // 连接失败, 丢回去重新连接
                     return null;
@@ -200,6 +203,10 @@ namespace QQChannelSharp.Sessions
             await _eventBus.PublishAsync(payload, session);
         }
 
+        private async Task OnWebSocketError(Session session, WebSocketException exception)
+        {
+            await EventBus.PublishWebSocketErrorAsync(session, exception);
+        }
         /// <summary>
         /// 需要连接CALLBACK
         /// </summary>

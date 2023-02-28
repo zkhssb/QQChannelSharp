@@ -9,6 +9,7 @@ using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.WebSocket;
+using System.Net.WebSockets;
 
 namespace QQChannelSharp.Events
 {
@@ -243,6 +244,17 @@ namespace QQChannelSharp.Events
             }
         }
 
+        public async Task PublishWebSocketErrorAsync(Session session, WebSocketException ex)
+        {
+            if (ErrorNotify != null)
+                await ErrorNotify.Invoke(new()
+                {
+                    Code = ex.ErrorCode,
+                    Message = ex.Message,
+                    Type = ErrorType.WebSocketError
+                }, session);
+        }
+
         public void Dispose()
         {
             if (!_disposed)
@@ -259,7 +271,7 @@ namespace QQChannelSharp.Events
                 await PlainEvent.Invoke(payload, session);
         }
 
-        private async Task ErrorNotifyHandler(WebSocketPayload payload, Session session)
+        private async Task ErrorNotifyHandler(WebSocketPayload? payload, Session session)
         {
             if (ErrorNotify != null)
                 await ErrorNotify.Invoke(new()
