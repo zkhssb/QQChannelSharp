@@ -1,138 +1,331 @@
 ﻿using Microsoft.Extensions.Http;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
-using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Announce;
+using QQChannelSharp.Dto.ApiPermissions;
+using QQChannelSharp.Dto.Audio;
+using QQChannelSharp.Dto.ChannelPermissions;
+using QQChannelSharp.Dto.Channels;
+using QQChannelSharp.Dto.Direct;
+using QQChannelSharp.Dto.Members;
+using QQChannelSharp.Dto.Message;
+using QQChannelSharp.Dto.Messages;
+using QQChannelSharp.Dto.Mute;
+using QQChannelSharp.Dto.Options;
+using QQChannelSharp.Dto.Pager;
+using QQChannelSharp.Dto.Roles;
+using QQChannelSharp.Dto.Schedules;
+using QQChannelSharp.Enumerations;
 using QQChannelSharp.Interfaces;
-using RestSharp;
-using RestSharp.Authenticators.OAuth2;
-using System.Net;
 
 namespace QQChannelSharp.OpenApi
 {
     public sealed class OpenApi : IOpenApi, IDisposable
     {
-        /// <summary>
-        /// 机器人Token
-        /// </summary>
-        public string Token { get; private set; } // Bot xxx
-        /// <summary>
-        /// 沙盒模式
-        /// </summary>
-        public bool SandBox
+        public Task<PinsMessage> AddPinsAsync(string channelId, string messageId)
         {
-            get => _sandBox;
-            set
-            {
-                _client.Options.BaseUrl = new Uri(value ? "https://sandbox.api.sgroup.qq.com" : "https://api.sgroup.qq.com/");
-                _sandBox = value;
-            }
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 重试次数
-        /// </summary>
-        private int RetryCount;
-        /// <summary>
-        /// 重试间隔
-        /// </summary>
-        private TimeSpan RetryInterval;
-
-        private bool _sandBox;
-        private RestClient _client;
-        private HttpClient _httpClient;
-        private IAsyncPolicy<HttpResponseMessage>? _retryPolicy;
-        private IEnumerable<TimeSpan> DecorrelatedJitterBackoffV2()
-            => Backoff.DecorrelatedJitterBackoffV2(RetryInterval, RetryCount);
-
-        /// <param name="token">机器人Token,通常是:<c>{appId}.{appToken}</c></param>
-        /// <param name="sandBox">沙盒模式</param>
-        public OpenApi(string token, bool sandBox = false)
+        public Task<Permissions> ChannelPermissionsAsync(string channelId, string userId)
         {
-            Token = token;
-            _sandBox = sandBox;
-            _httpClient = new();
-            _client = new RestClient(_httpClient, GetRestClientOptions())
-                .UseAuthenticator(new OAuth2AuthorizationRequestHeaderAuthenticator(Token, "Bot"));
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 使用Polly (默认策略)
-        /// 遇遇到Http错误、408、大于500的状态码时重发
-        /// </summary>
-        /// <param name="retryCount">最大重试次数</param>
-        /// <param name="retryInterval">间隔(单位秒)</param>
-        /// <returns></returns>
-        public OpenApi UsePolly(int retryCount, int retryInterval)
+        public Task<ChannelRolesPermissions> ChannelRolesPermissionsAsync(string channelId, string roleId)
         {
-            RetryCount = retryCount;
-            RetryInterval = TimeSpan.FromSeconds(retryInterval);
-            UsePolly(Policy<HttpResponseMessage>
-                .Handle<HttpRequestException>()
-                .Or<TimeoutException>()
-                .OrResult(x => x.StatusCode is >= HttpStatusCode.InternalServerError or HttpStatusCode.RequestTimeout)
-                .WaitAndRetryAsync(DecorrelatedJitterBackoffV2()));
-            return this;
+            throw new NotImplementedException();
         }
-        /// <summary>
-        /// 使用Polly (默认策略) 
-        /// 遇到Http错误、408、大于500的状态码时重发
-        /// <br/>
-        /// 默认为重试5次间隔一秒
-        /// </summary>
-        /// <returns></returns>
-        public OpenApi UsePolly()
+
+        public Task CleanChannelAnnouncesAsync(string channelId)
         {
-            UsePolly(5, 1);
-            return this;
+            throw new NotImplementedException();
         }
-        /// <summary>
-        /// 使用自定义 (使用自定义后无法使用 <see cref="RetryCount"/> 和 <see cref="RetryInterval"/> 来获取重试信息)
-        /// </summary>
-        public OpenApi UsePolly(IAsyncPolicy<HttpResponseMessage> retryPolicy)
+
+        public Task CleanGuildAnnouncesAsync(string guildId)
         {
-            _retryPolicy = retryPolicy;
-            _httpClient.Dispose();
-            _client.Dispose();
-            var handler = new PolicyHttpMessageHandler(_retryPolicy)
-            {
-                InnerHandler = new HttpClientHandler()
-            };
-            _httpClient = new(handler);
-            _client = new(_httpClient, GetRestClientOptions());
-            _client.UseAuthenticator(new OAuth2AuthorizationRequestHeaderAuthenticator(Token, "Bot"));
-            return this;
+            throw new NotImplementedException();
+        }
+
+        public Task CleanPinsAsync(string channelId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Announces> CreateChannelAnnouncesAsync(string channelId, GuildAnnouncesToCreate announce)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<DirectMessage> CreateDirectMessageAsync(DirectMessageToCreate directMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Announces> CreateGuildAnnouncesAsync(string guildId, GuildAnnouncesToCreate announces)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateMessageReactionAsync(string channelId, string messageId, Emoji emoji)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Channel> CreatePrivateChannelAsync(string guildId, ChannelValueObject channel, IEnumerable<string> userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Schedule> CreateScheduleAsync(string channelId, Schedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteChannelAnnouncesAsync(string channelId, string messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteChannelAsync(string guildId, string channelId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteGuildAnnouncesAsync(string guildId, string messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteGuildMemberAsync(string guildId, string userId, MemberDeleteOptions? options = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteOwnMessageReaction(string channelId, string messageId, Emoji emoji)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeletePinsAsync(string channelId, string messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteRoleAsync(string guildId, string roleId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteScheduleAsync(string channelId, string scheduleId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Channel> GetChannelAsync(string channelId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Channel>> GetChannelsAsync(string guildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Guild> GetGuildAsync(string guildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Member> GetGuildMemberAsync(string guildId, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Member>> GetGuildMembersAsync(string guildId, GuildMembersPager pager)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MessageReactionUsers> GetMessageReactionUsersAsync(string channelId, string messageId, Emoji emoji, MessageReactionPager pager)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MessageSetting> GetMessageSettingAsync(string guildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<APIPermissions> GetPermissionAsync(string guildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PinsMessage> GetPinsAsync(string channelId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GuildRoles> GetRolesAsync(string guildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Schedule> GetScheduleAsync(string channelId, string scheduleId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task GuildMuteAsync(string guildId, UpdateGuildMute mute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Schedule>> ListSchedulesAsync(string channelId, long since)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Member>> ListVoiceChannelMembersAsync(string channelId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> MeAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Guild>> MeGuildsAsync(GuildPager pager)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MemberAddRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MemberDeleteRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MemberMuteAsync(string guildId, string userId, UpdateGuildMute mute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Message> MessageAsync(string channelId, string messageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Message>> MessagesAsync(string channelId, MessagesPager pager)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Schedule> ModifyScheduleAsync(string channelId, string scheduleId, Schedule schedule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UpdateGuildMuteResponse> MultiMemberMuteAsync(string guildId, UpdateGuildMute mute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Channel> PatchChannelAsync(string guildId, ChannelValueObject channel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UpdateResult> PatchRoleAsync(string guildId, string roleId, Role role)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AudioControl> PostAudio(string channelId, AudioControl audioControl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Channel> PostChannelAsync(string guildId, ChannelValueObject channel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Message> PostDirectMessageAsync(DirectMessage directMessage, MessageToCreate message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Message> PostDMSettingGuideAsync(DirectMessage directMessage, string jumpGuildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Message> PostMessageAsync(string channelId, MessageToCreate message)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UpdateResult> PostRoleAsync(string guildId, Role role)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Message> PostSettingGuideAsync(string channelId, IEnumerable<string> atUserId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PutChannelPermissionsAsync(string channelId, string userId, UpdateChannelPermissions channelPermissions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PutChannelRolesPermissionsAsync(string channelId, string roleId, UpdateChannelPermissions channelPermissions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PutInteractionAsync(string interactionId, string body)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<APIPermissionDemand> RequireAPIPermissions(string guildId, APIPermissionDemandToCreate demand)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RetractDMMessageAsync(string guildId, string messageId, IEnumerable<RetractMessageOption>? options = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null)
+        {
+            throw new NotImplementedException();
         }
 
         public string TraceID()
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// OpenApi V1
-        /// </summary>
+
         public int Version()
-            => 1;
-        public void Dispose()
         {
-            _httpClient?.Dispose();
-            _client?.Dispose();
+            throw new NotImplementedException();
         }
-
-        public string Me()
-        {
-            return _client.Get(new RestRequest("/users/@me")).Content ?? string.Empty;
-        }
-
-        public WebsocketAP GetAp()
-        {
-            return _client.Get<WebsocketAP>(new RestRequest("/gateway/bot"))!;
-        }
-
-        private RestClientOptions GetRestClientOptions()
-        => new()
-        {
-            BaseUrl = new Uri(_sandBox ? "https://sandbox.api.sgroup.qq.com" : "https://api.sgroup.qq.com/"),
-            ThrowOnAnyError = true
-        };
     }
 }

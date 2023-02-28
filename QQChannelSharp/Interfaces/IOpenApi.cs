@@ -1,6 +1,21 @@
-﻿namespace QQChannelSharp.Interfaces
+﻿using QQChannelSharp.Interfaces.OpenApi;
+
+namespace QQChannelSharp.Interfaces
 {
-    public interface IOpenApi
+    /// <summary>
+    /// OpenApi接口
+    /// </summary>
+    public interface IOpenApi : IAnnouncesApi, IAPIPermissionsApi,
+        IAudioApi, IChannelApi,
+        IChannelPermissionsApi,
+        IDirectMessageApi,
+        IGuildApi, IInteractionApi,
+        IMemberApi, IMessageApi,
+        IMessageReactionApi,
+        IMessageSettingApi,
+        IPinsApi, IRoleApi,
+        IScheduleApi, IUserApi,
+        IWebHookApi
     {
         /// <summary>
         /// 当前版本
