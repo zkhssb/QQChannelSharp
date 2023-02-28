@@ -10,14 +10,20 @@ using QQChannelSharp.WebSocket;
 
 namespace QQChannelSharp.Events;
 
+/// <summary>
+/// Bot鉴权成功事件
+/// </summary>
+public delegate Task ReadyEventHandler(WebSocketPayload payload, WSReadyData data, Session session);
+
+/// <summary>
+/// Bot重连成功
+/// </summary>
+public delegate Task ResumedEventHandler(WebSocketPayload payload, WSResumeData data, Session session);
 
 /// <summary>
 /// ErrorNotifyHandler 当 ws 连接发生错误的时候，会回调，方便使用方监控相关错误
 /// 比如 reconnect invalidSession 等错误
 /// </summary>
-/// <param name="error"></param>
-/// <param name="session"></param>
-/// <returns></returns>
 public delegate Task ErrorNotifyHandler(ErrorNotify error, Session session);
 
 /// <summary>

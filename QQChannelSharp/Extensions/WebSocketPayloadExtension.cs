@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Enumerations;
 using System.Text.Json;
 
 namespace QQChannelSharp.Extensions
@@ -24,6 +25,14 @@ namespace QQChannelSharp.Extensions
         {
             payload.Data = data;
             return payload;
+        }
+        /// <summary>
+        /// 获取事件类型
+        /// </summary>
+        public static EventType GetEventType(this WebSocketPayload payload)
+        {
+            Enum.TryParse(typeof(EventType), payload.EventType, true, out var eventType);
+            return (EventType)(eventType ?? EventType.Unknown);
         }
     }
 }

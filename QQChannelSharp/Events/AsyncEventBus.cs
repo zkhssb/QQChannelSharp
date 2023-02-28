@@ -49,15 +49,36 @@ namespace QQChannelSharp.Events
         public event ReplyEventHandler? ReplyEvent;
         public event ForumAuditEventHandler? ForumAuditEvent;
         public event InteractionEventHandler? InteractionEvent;
+        public event ReadyEventHandler? Ready;
+        public event ResumedEventHandler? Resumed;
 
         public AsyncEventBus()
         {
             _eventParseFunc = new()
             {
                 {
+                    OPCode.WSInvalidSession,
+                    new()
+                    {
+                        {
+                            string.Empty,
+                            ErrorNotifyHandler
+                        }
+                    }
+                },
+                {
                     OPCode.WSDispatchEvent,
                     new()
                     {
+                        // WS
+                        {
+                            "READY",
+                            ReadyHandler
+                        },
+                        {
+                            "RESUMED",
+                            ResumedHandler
+                        },
                         // 频道
                         {
                             "GUILD_CREATE",
@@ -207,7 +228,7 @@ namespace QQChannelSharp.Events
         }
         public async Task PublishAsync(WebSocketPayload payload, Session session)
         {
-            // 先查找处理字典中有没有这个事件的处理器
+            // 查找处理字典中有没有这个事件的处理器
             if (_eventParseFunc.TryGetValue(payload.OPCode, out var message))
             {
                 if (message.TryGetValue(payload.EventType?.ToUpper() ?? string.Empty, out AsyncEventHandlerFunction? func)
@@ -241,12 +262,24 @@ namespace QQChannelSharp.Events
         private async Task ErrorNotifyHandler(WebSocketPayload payload, Session session)
         {
             if (ErrorNotify != null)
-                await ErrorNotify.Invoke(new(), session);
+                await ErrorNotify.Invoke(new()
+                {
+                    Code = 0,
+                    Message = "invalid session: please check the intents or token",
+                    Type = ErrorType.InvalidSession
+                }, session);
         }
 
-        private Task ReadyHandler(WebSocketPayload payload, Session session)
+        private async Task ReadyHandler(WebSocketPayload payload, Session session)
         {
-            throw new NotImplementedException();
+            if (Ready != null)
+                await Ready.Invoke(payload, payload.GetData<WSReadyData>(), session);
+        }
+
+        private async Task ResumedHandler(WebSocketPayload payload, Session session)
+        {
+            if (Resumed != null)
+                await Resumed.Invoke(payload, payload.GetData<WSResumeData>(), session);
         }
 
         private async Task GuildHandler(WebSocketPayload payload, Session session)

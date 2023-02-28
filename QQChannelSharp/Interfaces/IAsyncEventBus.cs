@@ -6,6 +6,14 @@ namespace QQChannelSharp.Events
     public interface IAsyncEventBus : IDisposable
     {
         /// <summary>
+        /// 机器人鉴权成功
+        /// </summary>
+        event ReadyEventHandler? Ready;
+        /// <summary>
+        /// 机器人重连成功
+        /// </summary>
+        event ResumedEventHandler? Resumed;
+        /// <summary>
         /// 错误通知
         /// </summary>
         event ErrorNotifyHandler? ErrorNotify;
