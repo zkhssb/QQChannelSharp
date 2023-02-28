@@ -2,12 +2,10 @@
 using QQChannelSharp.Client;
 using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Events;
-using QQChannelSharp.Exceptions;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Utils;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
-using System.Threading;
 
 namespace QQChannelSharp.Sessions
 {

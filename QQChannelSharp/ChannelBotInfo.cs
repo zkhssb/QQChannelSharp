@@ -1,5 +1,4 @@
 ﻿using QQChannelSharp.Enumerations;
-using System.Text.Json.Serialization;
 
 namespace QQChannelSharp
 {

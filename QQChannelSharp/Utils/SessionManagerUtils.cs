@@ -1,11 +1,4 @@
-﻿using QQChannelSharp.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QQChannelSharp.Utils
+﻿namespace QQChannelSharp.Utils
 {
     /// <summary>
     /// 实现 session manager 所需要的公共方法。

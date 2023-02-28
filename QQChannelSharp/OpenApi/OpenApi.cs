@@ -5,7 +5,6 @@ using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Interfaces;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
-using System.Linq.Expressions;
 using System.Net;
 
 namespace QQChannelSharp.OpenApi

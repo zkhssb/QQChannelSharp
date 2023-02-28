@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QQChannelSharp.WebSocket
+﻿namespace QQChannelSharp.WebSocket
 {
     /// <summary>
     /// Session 连接的 session 结构，包括链接的所有必要字段

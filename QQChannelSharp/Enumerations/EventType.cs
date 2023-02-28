@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QQChannelSharp.Enumerations
+﻿namespace QQChannelSharp.Enumerations
 {
     /// <summary>
     /// 事件类型 (只用于在Payload扩展 GetEventType 后判断类型)

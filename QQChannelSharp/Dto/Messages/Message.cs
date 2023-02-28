@@ -1,12 +1,7 @@
 ﻿using QQChannelSharp.Dto.Members;
 using QQChannelSharp.Dto.MessageArks;
 using QQChannelSharp.Dto.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace QQChannelSharp.Dto.Message
 {

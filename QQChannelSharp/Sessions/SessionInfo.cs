@@ -1,5 +1,4 @@
-﻿using QQChannelSharp.Client;
-using QQChannelSharp.WebSocket;
+﻿using QQChannelSharp.WebSocket;
 
 namespace QQChannelSharp.Sessions
 {

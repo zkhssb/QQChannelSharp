@@ -1,5 +1,4 @@
-﻿using QQChannelSharp.Dto.WebSocket;
-using QQChannelSharp.Events;
+﻿using QQChannelSharp.Events;
 using QQChannelSharp.Sessions;
 
 namespace QQChannelSharp.Interfaces
