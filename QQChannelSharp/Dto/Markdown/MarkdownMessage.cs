@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace QQChannelSharp.Dto.Markdown
+{
+    /// <summary>
+    /// markdown 消息
+    /// </summary>
+    public class MarkdownMessage
+    {
+        /// <summary>
+        /// 模板ID
+        /// </summary>
+        [JsonPropertyName("template_id")]
+        public required int TemplateId { get; set; }
+        /// <summary>
+        /// 模版参数
+        /// </summary>
+        [JsonPropertyName("params")]
+        public required List<MarkdownParams> Params { get; set; }
+        /// <summary>
+        /// 原生Markdown
+        /// </summary>
+        [JsonPropertyName("content")]
+        public required string Content { get; set; }
+    }
+}
