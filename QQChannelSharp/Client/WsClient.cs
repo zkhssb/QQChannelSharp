@@ -29,6 +29,7 @@ namespace QQChannelSharp.Client
         private readonly CancellationTokenSource _heartbeatTokenSource = new();
 
         public event WebSocketClosedAsyncCallBack? ClientClosed;
+        public event PayloadReceivedAsyncCallBack? Received;
 
         private async Task HeartBeatTask()
         {
@@ -180,7 +181,7 @@ namespace QQChannelSharp.Client
                         if (receiveResult.EndOfMessage)
                             break;
                     }
-                    if (HandleMessage(Encoding.UTF8.GetString(ms.ToArray())))
+                    if (await HandleMessageAsync(Encoding.UTF8.GetString(ms.ToArray())))
                     {
                         errorCode = 4009; // 如果处理消息返回True 那么就是收到了需要重连的消息
                         ClientClosed?.Invoke(_session, errorCode); // 通知后退出
@@ -219,7 +220,7 @@ namespace QQChannelSharp.Client
             {
                 ex.Task?.Dispose();
             }
-            Console.WriteLine("SEND: {0}", dataJson);
+            //Console.WriteLine("SEND: {0}", dataJson);
         }
 
         /// <summary>
@@ -227,11 +228,11 @@ namespace QQChannelSharp.Client
         /// </summary>
         /// <param name="msg">消息纯文本</param>
         /// <returns>如果需要关闭连接,则返回True</returns>
-        private bool HandleMessage(string message)
+        private async Task<bool> HandleMessageAsync(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
                 return false;
-            Console.WriteLine("{0}_WS: {1}", _session.Id, message);
+            //Console.WriteLine("{0}_WS: {1}", _session.Id, message);
             WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message)
                 ?? throw new ArgumentException("无法解析Payload");
             payload.RawMessage = message;
@@ -251,6 +252,8 @@ namespace QQChannelSharp.Client
                 default:
                     break;
             }
+            if (null != Received)
+                await Received.Invoke(_session, payload);
             return false;
         }
 

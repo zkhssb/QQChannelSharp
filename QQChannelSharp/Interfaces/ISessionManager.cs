@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Events;
 using QQChannelSharp.Sessions;
 
 namespace QQChannelSharp.Interfaces
@@ -8,7 +9,22 @@ namespace QQChannelSharp.Interfaces
     /// </summary>
     public interface ISessionManager : IDisposable
     {
+        /// <summary>
+        /// 异步启动SessionManager (非阻塞)
+        /// </summary>
+        /// <returns></returns>
         Task StartAsync();
-        Dictionary<Guid, SessionInfo> Sessions();
+        /// <summary>
+        /// 在线的Session字典
+        /// <br/>
+        /// <see langword="Key (Guid)"/>只在SessionManager内部维护
+        /// <br/>
+        /// 要获取SessionId请读<see langword="SessionInfo.Session.Id"/>
+        /// </summary>
+        IReadOnlyDictionary<Guid, SessionInfo> Sessions();
+        /// <summary>
+        /// 事件总线
+        /// </summary>
+        IAsyncEventBus EventBus { get; }
     }
 }

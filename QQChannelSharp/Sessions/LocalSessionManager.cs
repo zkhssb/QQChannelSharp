@@ -1,6 +1,7 @@
 ﻿
 using QQChannelSharp.Client;
 using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Events;
 using QQChannelSharp.Exceptions;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Utils;
@@ -45,6 +46,20 @@ namespace QQChannelSharp.Sessions
         /// </summary>
         private readonly SemaphoreSlim _semaphoreSlim = new(1);
 
+        /// <summary>
+        /// 事件总线实例
+        /// </summary>
+        private readonly AsyncEventBus _eventBus = new AsyncEventBus();
+
+        /// <summary>
+        /// 只读字典, 在线的Session信息
+        /// </summary>
+        public IReadOnlyDictionary<Guid, SessionInfo> OnlineSession =>
+            _sessionTasks;
+
+        public IAsyncEventBus EventBus
+            => _eventBus;
+
         public LocalSessionManager(WebsocketAP ap, ChannelBotInfo botInfo)
         {
             _apInfo = ap;
@@ -72,6 +87,7 @@ namespace QQChannelSharp.Sessions
                     if (_sessionTasks.TryGetValue(session.Guid, out var sessionInfo))
                     {
                         sessionInfo.Client.ClientClosed -= OnWebSocketClosed; // 注销任务
+                        sessionInfo.Client.Received -= OnReceived; // 注销任务
                         sessionInfo.Client.Dispose(); // 销毁原来的客户端
                         _sessionTasks.Remove(session.Guid); // 从字典中删除这个任务
                         return true;
@@ -120,6 +136,7 @@ namespace QQChannelSharp.Sessions
                 await _semaphoreSlim.WaitAsync();
                 IWebSocketClient wsClient = new WsClient(session);
                 wsClient.ClientClosed += OnWebSocketClosed;
+                wsClient.Received += OnReceived;
                 try
                 {
                     wsClient.Connect();
@@ -134,6 +151,7 @@ namespace QQChannelSharp.Sessions
                     Console.WriteLine("shard{0} connect error: {0}", session.Shard.ShardID, ex.WebSocketErrorCode.ToString());
 
                     wsClient.ClientClosed -= OnWebSocketClosed;
+                    wsClient.Received -= OnReceived;
                     wsClient.Dispose();
                     await _sessionChan.WriteAsync(session); // 连接失败, 丢回去重新连接
                     return null;
@@ -174,6 +192,14 @@ namespace QQChannelSharp.Sessions
 
                 await _sessionChan.WriteAsync(session); // 丢回去重新连接
             }
+        }
+
+        /// <summary>
+        /// 当某个WebSocket客户端收到消息
+        /// </summary>
+        private async Task OnReceived(Session session, WebSocketPayload payload)
+        {
+            await _eventBus.PublishAsync(payload, session);
         }
 
         /// <summary>
@@ -266,8 +292,8 @@ namespace QQChannelSharp.Sessions
             }
         }
 
-        public Dictionary<Guid, SessionInfo> Sessions()
-            => _sessionTasks;
+        public IReadOnlyDictionary<Guid, SessionInfo> Sessions()
+            => OnlineSession;
 
         ~LocalSessionManager()
         {

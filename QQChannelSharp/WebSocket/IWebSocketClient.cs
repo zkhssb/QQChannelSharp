@@ -6,9 +6,11 @@ namespace QQChannelSharp.WebSocket
     /// WebSocket连接关闭异步回调
     /// </summary>
     public delegate Task WebSocketClosedAsyncCallBack(Session session, int closeCode);
+    public delegate Task PayloadReceivedAsyncCallBack(Session session, WebSocketPayload payload);
     public interface IWebSocketClient : IDisposable
     {
         event WebSocketClosedAsyncCallBack ClientClosed;
+        event PayloadReceivedAsyncCallBack Received;
         /// <summary>
         /// Connect 连接到 wss 地址
         /// </summary>
