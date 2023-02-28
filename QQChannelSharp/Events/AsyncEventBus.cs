@@ -153,7 +153,7 @@ namespace QQChannelSharp.Events
                         },
                         {
                             "DIRECT_MESSAGE_DELETE",
-                            DirectMessageHandler
+                            DirectMessageDeleteHandler
                         },
                         // 音频
                         {
@@ -264,7 +264,6 @@ namespace QQChannelSharp.Events
             }
         }
 
-
         private async Task PlainEventHandler(WebSocketPayload payload, Session session)
         {
             if (PlainEvent != null)
@@ -346,6 +345,12 @@ namespace QQChannelSharp.Events
         {
             if (DirectMessageEvent != null)
                 await DirectMessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+        }
+
+        private async Task DirectMessageDeleteHandler(WebSocketPayload payload, Session session)
+        {
+            if (DirectMessageDeleteEvent != null)
+                await DirectMessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
         }
 
         private async Task AudioHandler(WebSocketPayload payload, Session session)
