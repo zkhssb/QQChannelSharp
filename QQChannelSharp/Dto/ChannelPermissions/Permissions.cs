@@ -17,6 +17,6 @@ namespace QQChannelSharp.Dto.ChannelPermissions
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("permissions")]
-        public string? ApiPermissions { get; set; }
+        public string? ChannelPermissions { get; set; }
     }
 }
