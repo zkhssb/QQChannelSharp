@@ -252,7 +252,6 @@ namespace QQChannelSharp.Sessions
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -285,6 +284,7 @@ namespace QQChannelSharp.Sessions
                     _sessionHandler.Dispose(); // 先销毁监听器,以免关闭Session后重连
                     CloseAllSession(); // 关闭并销毁所有Session
                     _sessionChan.Dispose(); // 销毁管道
+                    _eventBus.Dispose();
                     _semaphoreSlim.Dispose(); // 销毁锁
                 }
 
