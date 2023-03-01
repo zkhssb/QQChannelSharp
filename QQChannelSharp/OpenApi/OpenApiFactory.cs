@@ -1,11 +1,11 @@
-﻿using Polly.Contrib.WaitAndRetry;
+﻿using Microsoft.Extensions.Http;
 using Polly;
+using Polly.Contrib.WaitAndRetry;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.OpenApi.HttpHandler;
 using RestSharp;
-using System.Net;
-using Microsoft.Extensions.Http;
 using RestSharp.Authenticators.OAuth2;
+using System.Net;
 
 namespace QQChannelSharp.OpenApi
 {

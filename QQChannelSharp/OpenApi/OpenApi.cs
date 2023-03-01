@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using QQChannelSharp.Dto;
+﻿using QQChannelSharp.Dto;
 using QQChannelSharp.Dto.Announce;
 using QQChannelSharp.Dto.ApiPermissions;
 using QQChannelSharp.Dto.Audio;
@@ -18,12 +17,6 @@ using QQChannelSharp.Enumerations;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using RestSharp;
-using System.Data;
-using System.Net;
-using System.Reactive.Concurrency;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Threading.Channels;
 using Channel = QQChannelSharp.Dto.Channels.Channel;
 
 namespace QQChannelSharp.OpenApi
