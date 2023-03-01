@@ -13,7 +13,7 @@ namespace QQChannelSharp.Extensions
             var result = await client.ExecuteAsync(request);
 
             if (null == result)
-                return new(default, new() { ErrorCode = -1, Message = "a" })
+                return new(default, new() { ErrorCode = -1, Message = "result is null" })
                 {
                     IsSuccess = false,
                     StatusCode = System.Net.HttpStatusCode.BadRequest,

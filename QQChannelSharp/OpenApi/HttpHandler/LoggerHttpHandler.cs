@@ -17,15 +17,13 @@ namespace QQChannelSharp.OpenApi.HttpHandler
         {
             var result = await base.SendAsync(request, cancellationToken);
             string content = string.Empty;
-            string traceId = result.Headers
-                .Where(h => h.Key?.ToLower() == "X-Tps-trace-ID".ToLower())
-                .FirstOrDefault().Value?.ToString() ?? string.Empty;
+            string traceId = result.Headers.GetValues("X-Tps-trace-ID").FirstOrDefault() ?? string.Empty;
             if (result.Content != null)
                 content = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
+            if (result.IsSuccessStatusCode)
                 _logger.LogInformation("[{0}/{1}]{2} TraceID: {3}", request.Method, result.StatusCode.ToString(), request.RequestUri?.PathAndQuery, traceId);
             else
-                _logger.LogError("[{0}/{1}]{2} TraceID: {3}\n{4}", request.Method, result.StatusCode.ToString(), request.RequestUri?.PathAndQuery, traceId, content);
+                _logger.LogError("[{0}/{1}]{2} TraceID:{3} {4}", request.Method, result.StatusCode.ToString(), request.RequestUri?.PathAndQuery, traceId, content);
             return result;
         }
     }

@@ -28,7 +28,7 @@ namespace QQChannelSharp.OpenApi
                     .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5));
                 var opts = new RestClientOptions()
                 {
-                    BaseUrl = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/"),
+                    //BaseUrl = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/"),
                     ThrowOnAnyError = true
                 };
                 var handler = new PolicyHttpMessageHandler(retryPolicy)
@@ -36,6 +36,7 @@ namespace QQChannelSharp.OpenApi
                     InnerHandler = new LoggerHttpHandler()
                 };
                 httpClient = new(handler);
+                httpClient.BaseAddress = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/");
                 restClient = new(httpClient);
             }
             else
