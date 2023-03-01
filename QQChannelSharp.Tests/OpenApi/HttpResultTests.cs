@@ -10,6 +10,7 @@ namespace QQChannelSharp.Tests.OpenApi
         {
             HttpResult<string> result = new(null, new Dto.OpenApiError() { ErrorCode = 999, Message = "Test" })
             {
+                TraceId = Guid.NewGuid().ToString(),
                 IsSuccess = false,
                 StatusCode = System.Net.HttpStatusCode.BadRequest
             };
@@ -21,6 +22,7 @@ namespace QQChannelSharp.Tests.OpenApi
         {
             HttpResult<string> result = new("Hello World!")
             {
+                TraceId = Guid.NewGuid().ToString(),
                 IsSuccess = true,
                 StatusCode = System.Net.HttpStatusCode.OK
             };

@@ -16,7 +16,7 @@ namespace QQChannelSharp.OpenApi
         /// </summary>
         private readonly OpenApiError? _error;
 
-        public HttpResult(TData? data, OpenApiError? error = null)
+        public HttpResult(TData? data = null, OpenApiError? error = null)
         {
             _data = data;
             _error = error;
@@ -31,6 +31,11 @@ namespace QQChannelSharp.OpenApi
         /// 是否成功
         /// </summary>
         public required bool IsSuccess { get; init; }
+
+        /// <summary>
+        /// 本次请求追溯ID
+        /// </summary>
+        public required string TraceId { get; init; }
 
         /// <summary>
         /// 获取<see langword="Data"/>
