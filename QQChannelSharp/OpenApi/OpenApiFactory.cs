@@ -45,7 +45,7 @@ namespace QQChannelSharp.OpenApi
             }
             // 添加验证Header "Bot {appId}.{token}"
             restClient.UseAuthenticator(new OAuth2AuthorizationRequestHeaderAuthenticator(options.BotInfo.FullToken, "Bot"));
-            return new OpenApi(restClient, httpClient, options.BotInfo);
+            return new OpenApi(restClient, httpClient);
         }
     }
 }

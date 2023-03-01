@@ -25,13 +25,11 @@ namespace QQChannelSharp.OpenApi
     {
         private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
-        private readonly ChannelBotInfo _channelBotInfo;
 
-        public OpenApi(RestClient restClient, HttpClient httpClient, ChannelBotInfo botInfo)
+        public OpenApi(RestClient restClient, HttpClient httpClient)
         {
             _httpClient = httpClient;
             _restClient = restClient;
-            _channelBotInfo = botInfo;
         }
 
         public async Task<HttpResult<PinsMessage>> AddPinsAsync(string channelId, string messageId)
