@@ -41,6 +41,7 @@ namespace QQChannelSharp.OpenApi
             else
             {
                 httpClient = new(new LoggerHttpHandler());
+                httpClient.BaseAddress = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/");
                 restClient = new(httpClient);
             }
             // 添加验证Header "Bot {appId}.{token}"
