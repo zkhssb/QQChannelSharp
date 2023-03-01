@@ -28,7 +28,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="guildId">频道ID</param>
         /// <param name="pager">选择器</param>
         /// <returns></returns>
-        Task<List<HttpResult<Member>>> GetGuildMembersAsync(string guildId, GuildMembersPager pager);
+        Task<HttpResult<List<Member>>> GetGuildMembersAsync(string guildId, GuildMembersPager pager);
         /// <summary>
         /// 删除频道成员
         /// </summary>

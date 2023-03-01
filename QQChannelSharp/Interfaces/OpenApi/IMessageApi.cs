@@ -28,6 +28,15 @@ namespace QQChannelSharp.Interfaces.OpenApi
         Task<HttpResult<List<Message>>> MessagesAsync(string channelId, MessagesPager pager);
 
         /// <summary>
+        /// 修改消息
+        /// </summary>
+        /// <param name="channelId">频道ID</param>
+        /// <param name="messageId">消息ID</param>
+        /// <param name="message">修改后的ID</param>
+        /// <returns></returns>
+        Task<HttpResult<Message>> PatchMessageAsync(string channelId, string messageId, MessageToCreate message);
+
+        /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="channelId">频道ID</param>

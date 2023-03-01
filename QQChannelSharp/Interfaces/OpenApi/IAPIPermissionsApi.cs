@@ -18,6 +18,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="guildId">频道ID</param>
         /// <param name="demand">授权信息</param>
         /// <returns></returns>
-        Task<HttpResult<APIPermissionDemand>> RequireAPIPermissions(string guildId, APIPermissionDemandToCreate demand);
+        Task<HttpResult<APIPermissionDemand>> RequireAPIPermissionsAsync(string guildId, APIPermissionDemandToCreate demand);
     }
 }

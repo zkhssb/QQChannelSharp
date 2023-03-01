@@ -37,15 +37,14 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="guildId">频道ID</param>
         /// <param name="channel">子频道信息</param>
         /// <returns></returns>
-        Task<HttpResult<Channel>> PatchChannelAsync(string guildId, ChannelValueObject channel);
+        Task<HttpResult<Channel>> PatchChannelAsync(string channelId, ChannelValueObject channel);
 
         /// <summary>
-        /// 创建子频道
+        /// 删除指定子频道
         /// </summary>
-        /// <param name="guildId">频道ID</param>
         /// <param name="channelId">子频道ID</param>
         /// <returns></returns>
-        Task<HttpResult<EmptyObject>> DeleteChannelAsync(string guildId, string channelId);
+        Task<HttpResult<EmptyObject>> DeleteChannelAsync(string channelId);
 
         /// <summary>
         /// 创建私密子频道
