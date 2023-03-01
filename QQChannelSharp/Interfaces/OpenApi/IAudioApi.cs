@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.Audio;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -13,6 +14,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">子频道ID</param>
         /// <param name="audioControl">音频控制对象</param>
         /// <returns></returns>
-        Task<AudioControl> PostAudio(string channelId, AudioControl audioControl);
+        Task<HttpResult<AudioControl>> PostAudio(string channelId, AudioControl audioControl);
     }
 }

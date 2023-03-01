@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.Message;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -9,6 +10,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// </summary>
         /// <param name="guildId">频道ID</param>
         /// <returns></returns>
-        Task<MessageSetting> GetMessageSettingAsync(string guildId);
+        Task<HttpResult<MessageSetting>> GetMessageSettingAsync(string guildId);
     }
 }

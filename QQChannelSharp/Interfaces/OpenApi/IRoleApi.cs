@@ -1,5 +1,6 @@
 ﻿using QQChannelSharp.Dto;
 using QQChannelSharp.Dto.Roles;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -13,7 +14,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// </summary>
         /// <param name="guildId">频道ID</param>
         /// <returns></returns>
-        Task<GuildRoles> GetRolesAsync(string guildId);
+        Task<HttpResult<GuildRoles>> GetRolesAsync(string guildId);
 
         /// <summary>
         /// 创建用户组
@@ -21,7 +22,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="guildId">频道ID</param>
         /// <param name="role">创建的用户组</param>
         /// <returns></returns>
-        Task<UpdateResult> PostRoleAsync(string guildId, Role role);
+        Task<HttpResult<UpdateResult>> PostRoleAsync(string guildId, Role role);
 
         /// <summary>
         /// 更改用户组信息
@@ -30,7 +31,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="roleId">用户组ID</param>
         /// <param name="role">新的用户组信息</param>
         /// <returns></returns>
-        Task<UpdateResult> PatchRoleAsync(string guildId, string roleId, Role role);
+        Task<HttpResult<UpdateResult>> PatchRoleAsync(string guildId, string roleId, Role role);
 
         /// <summary>
         /// 删除用户组
@@ -38,6 +39,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="guildId">频道ID</param>
         /// <param name="roleId">用户组ID</param>
         /// <returns></returns>
-        Task DeleteRoleAsync(string guildId, string roleId);
+        Task<HttpResult<EmptyObject>> DeleteRoleAsync(string guildId, string roleId);
     }
 }

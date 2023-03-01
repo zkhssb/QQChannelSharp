@@ -1,4 +1,6 @@
-﻿using QQChannelSharp.Dto.ChannelPermissions;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.ChannelPermissions;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -13,7 +15,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">子频道ID</param>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
-        Task<Permissions> ChannelPermissionsAsync(string channelId, string userId);
+        Task<HttpResult<Permissions>> ChannelPermissionsAsync(string channelId, string userId);
         /// <summary>
         /// 修改指定子频道的权限
         /// </summary>
@@ -21,7 +23,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="userId">用户ID</param>
         /// <param name="channelPermissions">修改的权限</param>
         /// <returns></returns>
-        Task PutChannelPermissionsAsync(string channelId, string userId, UpdateChannelPermissions channelPermissions);
+        Task<HttpResult<EmptyObject>> PutChannelPermissionsAsync(string channelId, string userId, UpdateChannelPermissions channelPermissions);
 
         /// <summary>
         /// 获取指定子频道身份组的权限
@@ -29,7 +31,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">子频道ID</param>
         /// <param name="roleId">身分组ID</param>
         /// <returns></returns>
-        Task<ChannelRolesPermissions> ChannelRolesPermissionsAsync(string channelId, string roleId);
+        Task<HttpResult<ChannelRolesPermissions>> ChannelRolesPermissionsAsync(string channelId, string roleId);
         /// <summary>
         /// 修改指定子频道身份组的权限
         /// </summary>
@@ -37,6 +39,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="roleId">身分组ID</param>
         /// <param name="channelPermissions">修改的权限</param>
         /// <returns></returns>
-        Task PutChannelRolesPermissionsAsync(string channelId, string roleId, UpdateChannelPermissions channelPermissions);
+        Task<HttpResult<EmptyObject>> PutChannelRolesPermissionsAsync(string channelId, string roleId, UpdateChannelPermissions channelPermissions);
     }
 }

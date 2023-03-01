@@ -1,4 +1,6 @@
-﻿using QQChannelSharp.Dto.Messages;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Messages;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -13,7 +15,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">子频道ID</param>
         /// <param name="messageId">消息ID</param>
         /// <returns></returns>
-        Task<PinsMessage> AddPinsAsync(string channelId, string messageId);
+        Task<HttpResult<PinsMessage>> AddPinsAsync(string channelId, string messageId);
 
         /// <summary>
         /// 删除子频道精华消息
@@ -21,20 +23,20 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">子频道ID</param>
         /// <param name="messageId">消息ID</param>
         /// <returns></returns>
-        Task DeletePinsAsync(string channelId, string messageId);
+        Task<HttpResult<EmptyObject>> DeletePinsAsync(string channelId, string messageId);
 
         /// <summary>
         /// 清除子频道全部精华消息
         /// </summary>
         /// <param name="channelId">子频道</param>
         /// <returns></returns>
-        Task CleanPinsAsync(string channelId);
+        Task<HttpResult<EmptyObject>> CleanPinsAsync(string channelId);
 
         /// <summary>
         /// 获取子频道精华消息
         /// </summary>
         /// <param name="channelId">子频道ID</param>
         /// <returns></returns>
-        Task<PinsMessage> GetPinsAsync(string channelId);
+        Task<HttpResult<PinsMessage>> GetPinsAsync(string channelId);
     }
 }

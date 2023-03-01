@@ -1,7 +1,9 @@
-﻿using QQChannelSharp.Dto.Direct;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Direct;
 using QQChannelSharp.Dto.Message;
 using QQChannelSharp.Dto.Messages;
 using QQChannelSharp.Enumerations;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -15,7 +17,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// </summary>
         /// <param name="directMessage">创建私信数据</param>
         /// <returns>返回私信会话对象</returns>
-        Task<DirectMessage> CreateDirectMessageAsync(DirectMessageToCreate directMessage);
+        Task<HttpResult<DirectMessage>> CreateDirectMessageAsync(DirectMessageToCreate directMessage);
 
         /// <summary>
         /// 发送私信
@@ -23,7 +25,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="directMessage">私信会话对象</param>
         /// <param name="message">私信消息</param>
         /// <returns></returns>
-        Task<Message> PostDirectMessageAsync(DirectMessage directMessage, MessageToCreate message);
+        Task<HttpResult<Message>> PostDirectMessageAsync(DirectMessage directMessage, MessageToCreate message);
 
         /// <summary>
         /// 撤回私信频道消息
@@ -32,7 +34,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="messageId">消息ID</param>
         /// <param name="options">撤回选项</param>
         /// <returns></returns>
-        Task RetractDMMessageAsync(string guildId, string messageId, IEnumerable<RetractMessageOption>? options = null);
+        Task<HttpResult<EmptyObject>> RetractDMMessageAsync(string guildId, string messageId, IEnumerable<RetractMessageOption>? options = null);
 
         /// <summary>
         /// 发送私信设置引导
@@ -40,6 +42,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="directMessage">私信会话对象</param>
         /// <param name="jumpGuildId">要引导跳转的频道ID</param>
         /// <returns></returns>
-        Task<Message> PostDMSettingGuideAsync(DirectMessage directMessage, string jumpGuildId);
+        Task<HttpResult<Message>> PostDMSettingGuideAsync(DirectMessage directMessage, string jumpGuildId);
     }
 }

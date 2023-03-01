@@ -1,4 +1,6 @@
-﻿namespace QQChannelSharp.Interfaces.OpenApi
+﻿using QQChannelSharp.OpenApi;
+
+namespace QQChannelSharp.Interfaces.OpenApi
 {
     /// <summary>
     /// 互动接口
@@ -11,6 +13,6 @@
         /// <param name="interactionId">互动ID</param>
         /// <param name="body"></param>
         /// <returns></returns>
-        Task PutInteractionAsync(string interactionId, string body);
+        Task<HttpResult<EmptyObject>> PutInteractionAsync(string interactionId, string body);
     }
 }

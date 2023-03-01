@@ -18,12 +18,8 @@ namespace QQChannelSharp.Interfaces
         IWebHookApi
     {
         /// <summary>
-        /// 当前版本
+        /// OpenApi版本
         /// </summary>
         int Version();
-        /// <summary>
-        /// 获取 lastTraceID id
-        /// </summary>
-        string TraceID();
     }
 }

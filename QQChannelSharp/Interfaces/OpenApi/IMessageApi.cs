@@ -1,7 +1,9 @@
-﻿using QQChannelSharp.Dto.Message;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Message;
 using QQChannelSharp.Dto.Messages;
 using QQChannelSharp.Dto.Pager;
 using QQChannelSharp.Enumerations;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -15,7 +17,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// </summary>
         /// <param name="channelId">频道ID</param>
         /// <param name="messageId">消息ID</param>
-        Task<Message> MessageAsync(string channelId, string messageId);
+        Task<HttpResult<Message>> MessageAsync(string channelId, string messageId);
 
         /// <summary>
         /// 获取消息列表
@@ -23,14 +25,14 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">频道Id</param>
         /// <param name="pager">页面</param>
         /// <returns></returns>
-        Task<List<Message>> MessagesAsync(string channelId, MessagesPager pager);
+        Task<HttpResult<List<Message>>> MessagesAsync(string channelId, MessagesPager pager);
 
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="channelId">频道ID</param>
         /// <param name="message">消息</param>
-        Task<Message> PostMessageAsync(string channelId, MessageToCreate message);
+        Task<HttpResult<Message>> PostMessageAsync(string channelId, MessageToCreate message);
 
         /// <summary>
         /// 撤回消息
@@ -39,7 +41,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="messageId">消息ID</param>
         /// <param name="options">撤回可选项</param>
         /// <returns></returns>
-        Task RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null);
+        Task<HttpResult<EmptyObject>> RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null);
 
         /// <summary>
         /// 发送设置引导
@@ -47,6 +49,6 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <param name="channelId">频道ID</param>
         /// <param name="atUserId">@用户ID列表</param>
         /// <returns></returns>
-        Task<Message> PostSettingGuideAsync(string channelId, IEnumerable<string> atUserId);
+        Task<HttpResult<Message>> PostSettingGuideAsync(string channelId, IEnumerable<string> atUserId);
     }
 }

@@ -23,309 +23,297 @@ namespace QQChannelSharp.OpenApi
 {
     public sealed class OpenApi : IOpenApi, IDisposable
     {
-        public Task<PinsMessage> AddPinsAsync(string channelId, string messageId)
+        public Task<HttpResult<PinsMessage>> AddPinsAsync(string channelId, string messageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Permissions> ChannelPermissionsAsync(string channelId, string userId)
+        public Task<HttpResult<Permissions>> ChannelPermissionsAsync(string channelId, string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ChannelRolesPermissions> ChannelRolesPermissionsAsync(string channelId, string roleId)
+        public Task<HttpResult<ChannelRolesPermissions>> ChannelRolesPermissionsAsync(string channelId, string roleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task CleanChannelAnnouncesAsync(string channelId)
+        public Task<HttpResult<EmptyObject>> CleanChannelAnnouncesAsync(string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task CleanGuildAnnouncesAsync(string guildId)
+        public Task<HttpResult<EmptyObject>> CleanGuildAnnouncesAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task CleanPinsAsync(string channelId)
+        public Task<HttpResult<EmptyObject>> CleanPinsAsync(string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Announces> CreateChannelAnnouncesAsync(string channelId, GuildAnnouncesToCreate announce)
+        public Task<HttpResult<Announces>> CreateChannelAnnouncesAsync(string channelId, GuildAnnouncesToCreate announce)
         {
             throw new NotImplementedException();
         }
 
-        public Task<DirectMessage> CreateDirectMessageAsync(DirectMessageToCreate directMessage)
+        public Task<HttpResult<DirectMessage>> CreateDirectMessageAsync(DirectMessageToCreate directMessage)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Announces> CreateGuildAnnouncesAsync(string guildId, GuildAnnouncesToCreate announces)
+        public Task<HttpResult<Announces>> CreateGuildAnnouncesAsync(string guildId, GuildAnnouncesToCreate announces)
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateMessageReactionAsync(string channelId, string messageId, Emoji emoji)
+        public Task<HttpResult<EmptyObject>> CreateMessageReactionAsync(string channelId, string messageId, Emoji emoji)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Channel> CreatePrivateChannelAsync(string guildId, ChannelValueObject channel, IEnumerable<string> userId)
+        public Task<HttpResult<Channel>> CreatePrivateChannelAsync(string guildId, ChannelValueObject channel, IEnumerable<string> userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Schedule> CreateScheduleAsync(string channelId, Schedule schedule)
+        public Task<HttpResult<Schedule>> CreateScheduleAsync(string channelId, Schedule schedule)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteChannelAnnouncesAsync(string channelId, string messageId)
+        public Task<HttpResult<EmptyObject>> DeleteChannelAnnouncesAsync(string channelId, string messageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteChannelAsync(string guildId, string channelId)
+        public Task<HttpResult<EmptyObject>> DeleteChannelAsync(string guildId, string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteGuildAnnouncesAsync(string guildId, string messageId)
+        public Task<HttpResult<EmptyObject>> DeleteGuildAnnouncesAsync(string guildId, string messageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteGuildMemberAsync(string guildId, string userId, MemberDeleteOptions? options = null)
+        public Task<HttpResult<EmptyObject>> DeleteGuildMemberAsync(string guildId, string userId, MemberDeleteOptions? options = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteOwnMessageReaction(string channelId, string messageId, Emoji emoji)
+        public Task<HttpResult<EmptyObject>> DeleteOwnMessageReaction(string channelId, string messageId, Emoji emoji)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeletePinsAsync(string channelId, string messageId)
+        public Task<HttpResult<EmptyObject>> DeletePinsAsync(string channelId, string messageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteRoleAsync(string guildId, string roleId)
+        public Task<HttpResult<EmptyObject>> DeleteRoleAsync(string guildId, string roleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteScheduleAsync(string channelId, string scheduleId)
+        public Task<HttpResult<EmptyObject>> DeleteScheduleAsync(string channelId, string scheduleId)
         {
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        public Task<HttpResult<Channel>> GetChannelAsync(string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Channel> GetChannelAsync(string channelId)
+        public Task<HttpResult<List<Channel>>> GetChannelsAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Channel>> GetChannelsAsync(string guildId)
+        public Task<HttpResult<Guild>> GetGuildAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Guild> GetGuildAsync(string guildId)
+        public Task<HttpResult<Member>> GetGuildMemberAsync(string guildId, string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Member> GetGuildMemberAsync(string guildId, string userId)
+        public Task<List<HttpResult<Member>>> GetGuildMembersAsync(string guildId, GuildMembersPager pager)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Member>> GetGuildMembersAsync(string guildId, GuildMembersPager pager)
+        public Task<HttpResult<MessageReactionUsers>> GetMessageReactionUsersAsync(string channelId, string messageId, Emoji emoji, MessageReactionPager pager)
         {
             throw new NotImplementedException();
         }
 
-        public Task<MessageReactionUsers> GetMessageReactionUsersAsync(string channelId, string messageId, Emoji emoji, MessageReactionPager pager)
+        public Task<HttpResult<MessageSetting>> GetMessageSettingAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<MessageSetting> GetMessageSettingAsync(string guildId)
+        public Task<HttpResult<APIPermissions>> GetPermissionAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<APIPermissions> GetPermissionAsync(string guildId)
+        public Task<HttpResult<PinsMessage>> GetPinsAsync(string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PinsMessage> GetPinsAsync(string channelId)
+        public Task<HttpResult<GuildRoles>> GetRolesAsync(string guildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<GuildRoles> GetRolesAsync(string guildId)
+        public Task<HttpResult<Schedule>> GetScheduleAsync(string channelId, string scheduleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Schedule> GetScheduleAsync(string channelId, string scheduleId)
+        public Task<HttpResult<EmptyObject>> GuildMuteAsync(string guildId, UpdateGuildMute mute)
         {
             throw new NotImplementedException();
         }
 
-        public Task GuildMuteAsync(string guildId, UpdateGuildMute mute)
+        public Task<HttpResult<List<Schedule>>> ListSchedulesAsync(string channelId, long since)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Schedule>> ListSchedulesAsync(string channelId, long since)
+        public Task<HttpResult<List<Member>>> ListVoiceChannelMembersAsync(string channelId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Member>> ListVoiceChannelMembersAsync(string channelId)
+        public Task<HttpResult<User>> MeAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<User> MeAsync()
+        public Task<HttpResult<List<Guild>>> MeGuildsAsync(GuildPager pager)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Guild>> MeGuildsAsync(GuildPager pager)
+        public Task<HttpResult<EmptyObject>> MemberAddRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
         {
             throw new NotImplementedException();
         }
 
-        public Task MemberAddRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
+        public Task<HttpResult<EmptyObject>> MemberDeleteRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
         {
             throw new NotImplementedException();
         }
 
-        public Task MemberDeleteRoleAsync(string guildId, string roleId, string userId, MemberAddRoleBody value)
+        public Task<HttpResult<EmptyObject>> MemberMuteAsync(string guildId, string userId, UpdateGuildMute mute)
         {
             throw new NotImplementedException();
         }
 
-        public Task MemberMuteAsync(string guildId, string userId, UpdateGuildMute mute)
+        public Task<HttpResult<Message>> MessageAsync(string channelId, string messageId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Message> MessageAsync(string channelId, string messageId)
+        public Task<HttpResult<List<Message>>> MessagesAsync(string channelId, MessagesPager pager)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Message>> MessagesAsync(string channelId, MessagesPager pager)
+        public Task<HttpResult<Schedule>> ModifyScheduleAsync(string channelId, string scheduleId, Schedule schedule)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Schedule> ModifyScheduleAsync(string channelId, string scheduleId, Schedule schedule)
+        public Task<HttpResult<UpdateGuildMuteResponse>> MultiMemberMuteAsync(string guildId, UpdateGuildMute mute)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UpdateGuildMuteResponse> MultiMemberMuteAsync(string guildId, UpdateGuildMute mute)
+        public Task<HttpResult<Channel>> PatchChannelAsync(string guildId, ChannelValueObject channel)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Channel> PatchChannelAsync(string guildId, ChannelValueObject channel)
+        public Task<HttpResult<UpdateResult>> PatchRoleAsync(string guildId, string roleId, Role role)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UpdateResult> PatchRoleAsync(string guildId, string roleId, Role role)
+        public Task<HttpResult<AudioControl>> PostAudio(string channelId, AudioControl audioControl)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AudioControl> PostAudio(string channelId, AudioControl audioControl)
+        public Task<HttpResult<Channel>> PostChannelAsync(string guildId, ChannelValueObject channel)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Channel> PostChannelAsync(string guildId, ChannelValueObject channel)
+        public Task<HttpResult<Message>> PostDirectMessageAsync(DirectMessage directMessage, MessageToCreate message)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Message> PostDirectMessageAsync(DirectMessage directMessage, MessageToCreate message)
+        public Task<HttpResult<Message>> PostDMSettingGuideAsync(DirectMessage directMessage, string jumpGuildId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Message> PostDMSettingGuideAsync(DirectMessage directMessage, string jumpGuildId)
+        public Task<HttpResult<Message>> PostMessageAsync(string channelId, MessageToCreate message)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Message> PostMessageAsync(string channelId, MessageToCreate message)
+        public Task<HttpResult<UpdateResult>> PostRoleAsync(string guildId, Role role)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UpdateResult> PostRoleAsync(string guildId, Role role)
+        public Task<HttpResult<Message>> PostSettingGuideAsync(string channelId, IEnumerable<string> atUserId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Message> PostSettingGuideAsync(string channelId, IEnumerable<string> atUserId)
+        public Task<HttpResult<EmptyObject>> PutChannelPermissionsAsync(string channelId, string userId, UpdateChannelPermissions channelPermissions)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutChannelPermissionsAsync(string channelId, string userId, UpdateChannelPermissions channelPermissions)
+        public Task<HttpResult<EmptyObject>> PutChannelRolesPermissionsAsync(string channelId, string roleId, UpdateChannelPermissions channelPermissions)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutChannelRolesPermissionsAsync(string channelId, string roleId, UpdateChannelPermissions channelPermissions)
+        public Task<HttpResult<EmptyObject>> PutInteractionAsync(string interactionId, string body)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutInteractionAsync(string interactionId, string body)
+        public Task<HttpResult<APIPermissionDemand>> RequireAPIPermissions(string guildId, APIPermissionDemandToCreate demand)
         {
             throw new NotImplementedException();
         }
 
-        public Task<APIPermissionDemand> RequireAPIPermissions(string guildId, APIPermissionDemandToCreate demand)
+        public Task<HttpResult<EmptyObject>> RetractDMMessageAsync(string guildId, string messageId, IEnumerable<RetractMessageOption>? options = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task RetractDMMessageAsync(string guildId, string messageId, IEnumerable<RetractMessageOption>? options = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string TraceID()
+        public Task<HttpResult<EmptyObject>> RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null)
         {
             throw new NotImplementedException();
         }
 
         public int Version()
-        {
-            throw new NotImplementedException();
-        }
+            => 1;
     }
 }

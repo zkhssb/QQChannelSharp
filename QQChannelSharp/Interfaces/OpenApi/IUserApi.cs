@@ -1,5 +1,6 @@
 ﻿using QQChannelSharp.Dto;
 using QQChannelSharp.Dto.Pager;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {
@@ -8,11 +9,11 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// <summary>
         /// 获取自身信息
         /// </summary>
-        Task<User> MeAsync();
+        Task<HttpResult<User>> MeAsync();
         /// <summary>
         /// 获取自身频道信息
         /// </summary>
         /// <param name="pager">页面</param>
-        Task<List<Guild>> MeGuildsAsync(GuildPager pager);
+        Task<HttpResult<List<Guild>>> MeGuildsAsync(GuildPager pager);
     }
 }
