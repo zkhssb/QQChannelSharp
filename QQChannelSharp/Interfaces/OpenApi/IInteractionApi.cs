@@ -1,4 +1,5 @@
-﻿using QQChannelSharp.OpenApi;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.OpenApi;
 
 namespace QQChannelSharp.Interfaces.OpenApi
 {

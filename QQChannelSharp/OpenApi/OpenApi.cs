@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Http;
-using Polly;
-using Polly.Contrib.WaitAndRetry;
-using QQChannelSharp.Dto;
+﻿using QQChannelSharp.Dto;
 using QQChannelSharp.Dto.Announce;
 using QQChannelSharp.Dto.ApiPermissions;
 using QQChannelSharp.Dto.Audio;
@@ -21,7 +18,7 @@ using QQChannelSharp.Interfaces;
 
 namespace QQChannelSharp.OpenApi
 {
-    public sealed class OpenApi : IOpenApi, IDisposable
+    public sealed class OpenApi : IOpenApi
     {
         public Task<HttpResult<PinsMessage>> AddPinsAsync(string channelId, string messageId)
         {
@@ -309,6 +306,11 @@ namespace QQChannelSharp.OpenApi
         }
 
         public Task<HttpResult<EmptyObject>> RetractMessageAsync(string channelId, string messageId, IEnumerable<RetractMessageOption>? options = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }
