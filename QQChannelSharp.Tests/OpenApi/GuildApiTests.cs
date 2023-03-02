@@ -34,7 +34,7 @@ namespace QQChannelSharp.Tests.OpenApi
         {
             var result = await _openApi.GetGuildMemberAsync("15408510702836394950", "11528069550601428493");
             Assert.IsNotNull(result.Result);
-            Console.WriteLine("用户名: {0}\n加入频道时间:{1}", result.Result.User.Username, result.Result.JoinedAt);
+            Console.WriteLine("用户名: {0}\n加入频道时间:{1}", result.Result.User?.Username, result.Result.JoinedAt);
         }
 
         [TestMethod]

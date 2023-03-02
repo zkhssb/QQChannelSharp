@@ -15,9 +15,9 @@ namespace QQChannelSharp.Tests.OpenApi
         /// </summary>
         private readonly static OpenApiOptions _options = new(new ChannelBotInfo(_botInfo[0], _botInfo[1], true))
         {
-            Polly = true,
-            RetryCount = 3,
-            RetryInterval = 5
+            Retry = true,
+            RetryCount = 5,
+            RetryInterval = TimeSpan.FromSeconds(1)
         };
 
         /// <summary>

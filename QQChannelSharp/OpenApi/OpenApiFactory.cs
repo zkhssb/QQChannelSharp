@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Http;
-using Polly;
-using Polly.Contrib.WaitAndRetry;
+﻿using QQChannelSharp.Backoffs;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.OpenApi.HttpHandler;
 using RestSharp;
@@ -18,26 +16,24 @@ namespace QQChannelSharp.OpenApi
         {
             HttpClient httpClient;
             RestClient restClient;
-            if (options.Polly)
+            if (options.Retry)
             {
+                /*
                 // 使用Polly
-                IAsyncPolicy<HttpResponseMessage> retryPolicy = Policy<HttpResponseMessage>
+                IAsyncPolicy<HttpResponseMessage> retryPolicy = _policy<HttpResponseMessage>
                     .Handle<HttpRequestException>()
                     .Or<TimeoutException>()
                     .OrResult(x => x.StatusCode is >= HttpStatusCode.InternalServerError or HttpStatusCode.RequestTimeout or HttpStatusCode.GatewayTimeout)
                     .WaitAndRetryAsync(Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromSeconds(1), 5));
+                */
                 var opts = new RestClientOptions()
                 {
-                    //BaseUrl = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/"),
-                    ThrowOnAnyError = true
+                    ThrowOnAnyError = false
                 };
-                var handler = new PolicyHttpMessageHandler(retryPolicy)
-                {
-                    InnerHandler = new LoggerHttpHandler()
-                };
+                var handler = new PolicyHttpMessageHandler(DecorrelatedJitterBackoffV2.GetRetryIntervals(options.RetryCount, options.RetryInterval), new LoggerHttpHandler());
                 httpClient = new(handler);
                 httpClient.BaseAddress = new Uri(options.BotInfo.SandBox ? "https://sandbox.api.sgroup.qq.com/" : "https://api.sgroup.qq.com/");
-                restClient = new(httpClient);
+                restClient = new(httpClient, opts);
             }
             else
             {
