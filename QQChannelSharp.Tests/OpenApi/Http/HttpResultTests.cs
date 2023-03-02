@@ -1,6 +1,6 @@
 ﻿using QQChannelSharp.OpenApi;
 
-namespace QQChannelSharp.Tests.OpenApi
+namespace QQChannelSharp.Tests.OpenApi.Http
 {
     [TestClass]
     public class HttpResultTests

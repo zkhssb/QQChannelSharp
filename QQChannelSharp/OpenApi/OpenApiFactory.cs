@@ -14,7 +14,7 @@ namespace QQChannelSharp.OpenApi
         /// <summary>
         /// 创建一个OpenApi实例
         /// </summary>
-        public static IOpenApi Create(OpenApiFactoryOptions options)
+        public static IOpenApi Create(OpenApiOptions options)
         {
             HttpClient httpClient;
             RestClient restClient;
