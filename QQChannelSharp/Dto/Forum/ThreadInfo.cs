@@ -8,15 +8,15 @@ namespace QQChannelSharp.Dto.Forum
     public class ThreadInfo
     {
         [JsonPropertyName("thread_id")]
-        public required string ThreadID { get; set; }
+        public string ThreadID { get; set; } = string.Empty;
 
         [JsonPropertyName("title")]
-        public required string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [JsonPropertyName("content")]
-        public required string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         [JsonPropertyName("date_time")]
-        public required string DateTime { get; set; }
+        public string DateTime { get; set; } = string.Empty;
     }
 }

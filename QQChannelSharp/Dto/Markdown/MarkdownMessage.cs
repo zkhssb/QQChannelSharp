@@ -21,6 +21,6 @@ namespace QQChannelSharp.Dto.Markdown
         /// 原生Markdown
         /// </summary>
         [JsonPropertyName("content")]
-        public required string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

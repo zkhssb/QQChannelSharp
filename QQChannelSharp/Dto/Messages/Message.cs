@@ -14,43 +14,44 @@ namespace QQChannelSharp.Dto.Message
         /// 消息ID
         /// </summary>
         [JsonPropertyName("id")]
-        public required string ID { get; set; }
+        public string ID { get; set; } = string.Empty;
 
         /// <summary>
         /// 子频道ID
         /// </summary>
         [JsonPropertyName("channel_id")]
-        public required string ChannelID { get; set; }
+        public string ChannelID { get; set; } = string.Empty;
 
         /// <summary>
         /// 频道ID
         /// </summary>
         [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        public string GuildID { get; set; } = string.Empty;
 
         /// <summary>
         /// 内容
         /// </summary>
         [JsonPropertyName("content")]
-        public required string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         /// <summary>
         /// 发送时间
         /// </summary>
         [JsonPropertyName("timestamp")]
-        public required DateTime Timestamp { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// 消息编辑时间
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("edited_timestamp")]
-        public required DateTime EditedTimestamp { get; set; }
+        public DateTime? EditedTimestamp { get; set; }
 
         /// <summary>
         /// 是否@all
         /// </summary>
         [JsonPropertyName("mention_everyone")]
-        public required bool MentionEveryone { get; set; }
+        public bool MentionEveryone { get; set; } = false;
 
         /// <summary>
         /// 消息发送方
@@ -67,38 +68,42 @@ namespace QQChannelSharp.Dto.Message
         /// <summary>
         /// 附件
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("attachments")]
-        public required MessageAttachment[] Attachments { get; set; }
+        public MessageAttachment[]? Attachments { get; set; }
 
         /// <summary>
         /// 结构化消息-embeds
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("embeds")]
-        public required Embed[] Embeds { get; set; }
+        public Embed[]? Embeds { get; set; }
 
         /// <summary>
         /// 消息中的提醒信息(@)列表
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("mentions")]
-        public required User[] Mentions { get; set; }
+        public User[]? Mentions { get; set; }
 
         /// <summary>
         /// ark 消息
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("ark")]
-        public required Ark Ark { get; set; }
+        public Ark? Ark { get; set; }
 
         /// <summary>
         /// 私信消息
         /// </summary>
         [JsonPropertyName("direct_message")]
-        public required bool DirectMessage { get; set; }
+        public bool DirectMessage { get; set; }
 
         /// <summary>
         /// 子频道 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之前消息无法排序
         /// </summary>
         [JsonPropertyName("seq_in_channel")]
-        public required string SeqInChannel { get; set; }
+        public string SeqInChannel { get; set; } = string.Empty;
 
         /// <summary>
         /// 引用的消息
@@ -110,7 +115,8 @@ namespace QQChannelSharp.Dto.Message
         /// <summary>
         /// 私信场景下，该字段用来标识从哪个频道发起的私信
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("src_guild_id")]
-        public required string SrcGuildID { get; set; }
+        public string? SrcGuildID { get; set; }
     }
 }

@@ -13,22 +13,25 @@ namespace QQChannelSharp.Dto
         [JsonPropertyName("username")]
         public required string Username { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("avatar")]
-        public required string Avatar { get; set; }
+        public string? Avatar { get; set; }
 
         [JsonPropertyName("bot")]
-        public required bool Bot { get; set; }
+        public bool Bot { get; set; }
 
         /// <summary>
         /// 特殊关联应用的 openid
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("union_openid")]
-        public required string UnionOpenID { get; set; }
+        public string? UnionOpenID { get; set; }
 
         /// <summary>
         /// 机器人关联的用户信息，与union_openid关联的应用是同一个
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("union_user_account")]
-        public required string UnionUserAccount { get; set; }
+        public string? UnionUserAccount { get; set; }
     }
 }

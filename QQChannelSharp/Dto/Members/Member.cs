@@ -7,20 +7,22 @@ namespace QQChannelSharp.Dto.Members
     /// </summary>
     public class Member
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        public string? GuildID { get; set; }
 
         [JsonPropertyName("joined_at")]
-        public required DateTime JoinedAt { get; set; }
+        public DateTime JoinedAt { get; set; } = DateTime.MinValue;
 
         [JsonPropertyName("nick")]
-        public required string Nick { get; set; }
+        public string Nick { get; set; } = string.Empty;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("user")]
-        public required User User { get; set; }
+        public User? User { get; set; }
 
         [JsonPropertyName("roles")]
-        public required string[] Roles { get; set; }
+        public string[] Roles { get; set; } = new string[0];
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("op_user_id")]

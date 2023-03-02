@@ -17,6 +17,6 @@ namespace QQChannelSharp.Dto.Messages
         /// 是否忽律获取消息失败错误
         /// </summary>
         [JsonPropertyName("ignore_get_message_error")]
-        public required bool IgnoreGetMessageError { get; set; }
+        public bool IgnoreGetMessageError { get; set; }
     }
 }

@@ -8,36 +8,36 @@ namespace QQChannelSharp.Dto.Forum
     public class ForumAuditResult
     {
         [JsonPropertyName("task_id")]
-        public required string TaskID { get; set; }
+        public string TaskID { get; set; } = string.Empty;
 
         [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        public string GuildID { get; set; } = string.Empty;
 
         [JsonPropertyName("channel_id")]
-        public required string ChannelID { get; set; }
+        public string ChannelID { get; set; } = string.Empty;
 
         [JsonPropertyName("author_id")]
-        public required string AuthorID { get; set; }
+        public string AuthorID { get; set; } = string.Empty;
 
         [JsonPropertyName("thread_id")]
-        public required string ThreadID { get; set; }
+        public string ThreadID { get; set; } = string.Empty;
 
         [JsonPropertyName("post_id")]
-        public required string PostID { get; set; }
+        public string PostID { get; set; } = string.Empty;
 
         [JsonPropertyName("reply_id")]
-        public required string ReplyID { get; set; }
+        public string ReplyID { get; set; } = string.Empty;
 
         [JsonPropertyName("type")]
-        public required uint PublishType { get; set; }
+        public uint PublishType { get; set; }
 
         [JsonPropertyName("result")]
-        public required uint Result { get; set; }
+        public uint Result { get; set; }
 
         [JsonPropertyName("err_msg")]
-        public required string ErrMsg { get; set; }
+        public string ErrMsg { get; set; } = string.Empty;
 
         [JsonPropertyName("date_time")]
-        public required string DateTime { get; set; }
+        public string DateTime { get; set; } = string.Empty;
     }
 }

@@ -9,16 +9,16 @@ namespace QQChannelSharp.Dto.Roles
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("id")]
-        public static string? ID { get; set; }
+        public string? ID { get; set; }
 
         [JsonPropertyName("name")]
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("color")]
-        public required uint Color { get; set; }
+        public uint Color { get; set; } = 4278245297; //用户组默认颜色值
 
         [JsonPropertyName("hoist")]
-        public required uint Hoist { get; set; }
+        public uint Hoist { get; set; }
 
         /// <summary>
         /// 不会被修改，创建接口修改

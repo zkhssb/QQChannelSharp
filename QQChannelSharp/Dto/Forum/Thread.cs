@@ -7,13 +7,13 @@ namespace QQChannelSharp.Dto.Forum;
 public class Thread
 {
     [JsonPropertyName("guild_id")]
-    public required string GuildID { get; set; }
+    public string GuildID { get; set; } = string.Empty;
 
     [JsonPropertyName("channel_id")]
-    public required string ChannelID { get; set; }
+    public string ChannelID { get; set; } = string.Empty;
 
     [JsonPropertyName("author_id")]
-    public required string AuthorID { get; set; }
+    public string AuthorID { get; set; } = string.Empty;
 
     [JsonPropertyName("thread_info")]
     public required ThreadInfo ThreadInfo { get; set; }

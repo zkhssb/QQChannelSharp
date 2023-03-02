@@ -11,18 +11,18 @@ namespace QQChannelSharp.Dto.Direct
         /// 频道ID
         /// </summary>
         [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        public string GuildID { get; set; } = string.Empty;
 
         /// <summary>
         /// 子频道id
         /// </summary>
         [JsonPropertyName("channel_id")]
-        public required string ChannelID { get; set; }
+        public string ChannelID { get; set; } = string.Empty;
 
         /// <summary>
         /// 私信频道创建的时间戳
         /// </summary>
         [JsonPropertyName("create_time")]
-        public required string CreateTime { get; set; }
+        public string CreateTime { get; set; } = string.Empty;
     }
 }

@@ -12,12 +12,12 @@ namespace QQChannelSharp.Dto.Audio
         /// 音频URL
         /// </summary>
         [JsonPropertyName("audio_url")]
-        public required string URL { get; set; }
+        public string URL { get; set; } = string.Empty;
         /// <summary>
         /// 音频描述
         /// </summary>
         [JsonPropertyName("text")]
-        public required string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
         /// <summary>
         /// 音频状态
         /// </summary>

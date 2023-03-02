@@ -8,6 +8,6 @@ namespace QQChannelSharp.Dto.Messages
     public class MessageEmbedThumbnail
     {
         [JsonPropertyName("url")]
-        public required string URL { get; set; }
+        public string URL { get; set; } = string.Empty;
     }
 }

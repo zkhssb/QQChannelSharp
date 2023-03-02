@@ -13,11 +13,11 @@ namespace QQChannelSharp.Dto.Announce
         /// 子频道ID
         /// </summary>
         [JsonPropertyName("channel_id")]
-        public required string ChannelID { get; set; }
+        public string ChannelID { get; set; } = string.Empty;
         /// <summary>
         /// 推荐语
         /// </summary>
         [JsonPropertyName("introduce")]
-        public required string Introduce { get; set; }
+        public string Introduce { get; set; } = string.Empty;
     }
 }

@@ -66,20 +66,23 @@ namespace QQChannelSharp.Dto
         /// <summary>
         /// 频道列表
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("channels")]
-        public required Channel[] Channels { get; set; }
+        public Channel[]? Channels { get; set; }
 
         /// <summary>
         /// 游戏绑定公会区服ID
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("union_world_id")]
-        public required string UnionWorldID { get; set; }
+        public string? UnionWorldID { get; set; }
 
         /// <summary>
         /// 游戏绑定公会/战队ID
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("union_org_id")]
-        public required string UnionOrgID { get; set; }
+        public string? UnionOrgID { get; set; }
 
         /// <summary>
         /// 操作人

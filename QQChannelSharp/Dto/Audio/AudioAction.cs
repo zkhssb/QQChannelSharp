@@ -11,21 +11,21 @@ namespace QQChannelSharp.Dto.Audio
         /// 频道ID
         /// </summary>
         [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        public string GuildID { get; set; } = string.Empty;
         /// <summary>
         /// 子频道ID
         /// </summary>
 
         [JsonPropertyName("channel_id")]
-        public required string ChannelID { get; set; }
+        public string ChannelID { get; set; } = string.Empty;
         /// <summary>
         /// 音频链接
         /// </summary>
 
         [JsonPropertyName("audio_url")]
-        public required string URL { get; set; }
+        public string URL { get; set; } = string.Empty;
 
         [JsonPropertyName("text")]
-        public required string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
     }
 }
