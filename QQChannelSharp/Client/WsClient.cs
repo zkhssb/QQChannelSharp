@@ -1,8 +1,10 @@
-﻿using QQChannelSharp.Converters;
+﻿using Microsoft.Extensions.Logging;
+using QQChannelSharp.Converters;
 using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Exceptions;
 using QQChannelSharp.Extensions;
+using QQChannelSharp.Utils;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 using System.Text;
@@ -26,10 +28,12 @@ namespace QQChannelSharp.Client
         private int _heartbeatInterval = 60 * 1000; // 默认值,后面会自动设置
         private byte[] _buffer = new byte[4096]; // _buffer
         private SemaphoreSlim _semaphoreSlim = new(1);
+        private readonly ILogger<WsClient> _logger;
 
         public WsClient(Session session)
         {
             _session = session;
+            _logger = LoggerUtils.CreateLogger<WsClient>();
         }
 
         private readonly ClientWebSocket _webSocket = new();
@@ -199,6 +203,7 @@ namespace QQChannelSharp.Client
                 }
                 catch (WebSocketException ex)
                 {
+                    _logger.LogError(ex, "ws_error");
                     if (null != Error)
                         await Error(_session, ex);
 
@@ -211,7 +216,7 @@ namespace QQChannelSharp.Client
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    _logger.LogError(ex, "error");
                 }
             }
             ClientClosed?.Invoke(_session, errorCode); // 已取消 or 连接已断开但是不知道原因
@@ -244,6 +249,7 @@ namespace QQChannelSharp.Client
         {
             if (string.IsNullOrWhiteSpace(message))
                 return false;
+            _logger.LogDebug(GetLogString(message));
             //Console.WriteLine("{0}_WS: {1}", _session.Id, message);
             WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message, _options)
                 ?? throw new ArgumentException("无法解析Payload");
@@ -289,6 +295,7 @@ namespace QQChannelSharp.Client
                     break;
             }
         }
-
+        private string GetLogString(string message)
+            => $"[{(string.IsNullOrEmpty(_session.Id) ? "nosid" : _session.Id)}] {message}";
     }
 }

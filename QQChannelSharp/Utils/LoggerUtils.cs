@@ -7,6 +7,7 @@ namespace QQChannelSharp.Utils
         private static readonly ILoggerFactory _loggerFactory = LoggerFactory.Create(build =>
         {
             build.AddConsole();
+            build.SetMinimumLevel(LogLevel.Debug);
         });
 
         /// <summary>
