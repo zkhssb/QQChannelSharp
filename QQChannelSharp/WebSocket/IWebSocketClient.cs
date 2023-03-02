@@ -1,8 +1,7 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
-using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 
-namespace QQChannelSharp.Interfaces
+namespace QQChannelSharp.WebSocket
 {
     /// <summary>
     /// WebSocket连接关闭异步回调
