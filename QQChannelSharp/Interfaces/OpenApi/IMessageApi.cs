@@ -17,7 +17,7 @@ namespace QQChannelSharp.Interfaces.OpenApi
         /// </summary>
         /// <param name="channelId">频道ID</param>
         /// <param name="messageId">消息ID</param>
-        Task<HttpResult<Message>> MessageAsync(string channelId, string messageId);
+        Task<HttpResult<GetMessageResult>> MessageAsync(string channelId, string messageId);
 
         /// <summary>
         /// 获取消息列表

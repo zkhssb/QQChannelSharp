@@ -60,12 +60,12 @@ namespace QQChannelSharp.Dto.Pager
             {
                 query.Add("limit", Limit);
             }
-            if (!string.IsNullOrEmpty(After))
+            if (!string.IsNullOrEmpty(After) && "0" != After)
             {
                 query.Add("after", After);
             }
             // 优先 after
-            if (string.IsNullOrEmpty(After) && !string.IsNullOrEmpty(Before))
+            if (string.IsNullOrEmpty(After) && !string.IsNullOrEmpty(Before) && "0" != Before)
             {
                 query.Add("before", Before);
             }

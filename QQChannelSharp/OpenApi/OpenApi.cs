@@ -85,14 +85,14 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/channels/{channel_id}/announces", Method.Post)
                 .AddUrlSegment("channel_id", channelId)
-                .AddJsonBody(announce);
+                .AddDto(announce);
             return await _restClient.ExecAsync<Announces>(request);
         }
 
         public async Task<HttpResult<DirectMessage>> CreateDirectMessageAsync(DirectMessageToCreate directMessage)
         {
             var request = new RestRequest("/users/@me/dms", Method.Post)
-                .AddJsonBody(directMessage);
+                .AddDto(directMessage);
             return await _restClient.ExecAsync<DirectMessage>(request);
         }
 
@@ -100,7 +100,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/announces", Method.Post)
                 .AddUrlSegment("guild_id", guildId)
-                .AddJsonBody(announces);
+                .AddDto(announces);
             return await _restClient.ExecAsync<Announces>(request);
         }
 
@@ -169,7 +169,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/guilds/{guild_id}/members/{user_id}", Method.Delete)
                 .AddUrlSegment("guild_id", guildId)
                 .AddUrlSegment("user_id", userId)
-                .AddJsonBody(options ?? new());
+                .AddDto(options ?? new());
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -295,7 +295,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/mute", Method.Patch)
                .AddUrlSegment("guild_id", guildId)
-               .AddJsonBody(mute);
+               .AddDto(mute);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -331,9 +331,9 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/members/{user_id}/roles/{role_id}", Method.Put)
                 .AddUrlSegment("guild_id", guildId)
-                .AddUrlSegment("user_id", roleId)
+                .AddUrlSegment("role_id", roleId)
                 .AddUrlSegment("user_id", userId)
-                .AddJsonBody(value);
+                .AddDto(value);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -341,9 +341,9 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/members/{user_id}/roles/{role_id}", Method.Delete)
                 .AddUrlSegment("guild_id", guildId)
-                .AddUrlSegment("user_id", roleId)
+                .AddUrlSegment("role_id", roleId)
                 .AddUrlSegment("user_id", userId)
-                .AddJsonBody(value);
+                .AddDto(value);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -352,16 +352,16 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/guilds/{guild_id}/members/{user_id}/mute", Method.Patch)
                 .AddUrlSegment("guild_id", guildId)
                 .AddUrlSegment("user_id", userId)
-                .AddJsonBody(mute);
+                .AddDto(mute);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
-        public async Task<HttpResult<Message>> MessageAsync(string channelId, string messageId)
+        public async Task<HttpResult<GetMessageResult>> MessageAsync(string channelId, string messageId)
         {
             var request = new RestRequest("/channels/{channel_id}/messages/{message_id}", Method.Get)
                 .AddUrlSegment("channel_id", channelId)
                 .AddUrlSegment("message_id", messageId);
-            return await _restClient.ExecAsync<Message>(request);
+            return await _restClient.ExecAsync<GetMessageResult>(request);
         }
 
         public async Task<HttpResult<List<Message>>> MessagesAsync(string channelId, MessagesPager pager)
@@ -382,7 +382,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/channels/{channel_id}/schedules/{schedule_id}", Method.Patch)
                 .AddUrlSegment("channel_id", channelId)
                 .AddUrlSegment("schedule_id", scheduleId)
-                .AddJsonBody(body);
+                .AddDto(body);
             return await _restClient.ExecAsync<Schedule>(request);
         }
 
@@ -392,7 +392,7 @@ namespace QQChannelSharp.OpenApi
                 throw new ArgumentNullException("no user id param");
             var request = new RestRequest("/guilds/{guild_id}/mute", Method.Patch)
                 .AddUrlSegment("guild_id", guildId)
-                .AddJsonBody(mute);
+                .AddDto(mute);
             return await _restClient.ExecAsync<UpdateGuildMuteResponse>(request);
         }
 
@@ -400,7 +400,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/channels/{channel_id}", Method.Patch)
                 .AddUrlSegment("channel_id", channelId)
-                .AddJsonBody(channel);
+                .AddDto(channel);
             return await _restClient.ExecAsync<Channel>(request);
         }
 
@@ -409,7 +409,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/channels/{channel_id}/messages/{message_id}", Method.Patch)
                 .AddUrlSegment("channel_id", channelId)
                 .AddUrlSegment("message_id", messageId)
-                .AddJsonBody(message);
+                .AddDto(message);
             return await _restClient.ExecAsync<Message>(request);
         }
 
@@ -443,7 +443,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/guilds/{guild_id}/roles/{role_id}", Method.Patch)
                 .AddUrlSegment("guild_id", guildId)
                 .AddUrlSegment("role_id", roleId)
-                .AddJsonBody(body);
+                .AddDto(body);
 
             return await _restClient.ExecAsync<UpdateResult>(request);
         }
@@ -453,7 +453,7 @@ namespace QQChannelSharp.OpenApi
             // 目前服务端成功不回包
             var request = new RestRequest("/channels/{channel_id}/audio", Method.Post)
                 .AddUrlSegment("channel_id", channelId)
-                .AddJsonBody(audioControl);
+                .AddDto(audioControl);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -461,7 +461,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/channels", Method.Post)
                 .AddUrlSegment("guild_id", guildId)
-                .AddJsonBody(channel);
+                .AddDto(channel);
             return await _restClient.ExecAsync<Channel>(request);
         }
 
@@ -469,7 +469,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/dms/{guild_id}/messages", Method.Post)
                 .AddUrlSegment("guild_id", directMessage.GuildID)
-                .AddJsonBody(message);
+                .AddDto(message);
             return await _restClient.ExecAsync<Message>(request);
         }
 
@@ -481,7 +481,7 @@ namespace QQChannelSharp.OpenApi
             };
             var request = new RestRequest("/dms/{guild_id}/settingguide", Method.Post)
                 .AddUrlSegment("guild_id", directMessage.GuildID)
-                .AddJsonBody(stc);
+                .AddDto(stc);
             return await _restClient.ExecAsync<Message>(request);
         }
 
@@ -489,7 +489,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/channels/{channel_id}/messages", Method.Post)
                   .AddUrlSegment("channel_id", channelId)
-                  .AddJsonBody(message);
+                  .AddDto(message);
             return await _restClient.ExecAsync<Message>(request);
         }
 
@@ -522,7 +522,7 @@ namespace QQChannelSharp.OpenApi
 
             var request = new RestRequest("/guilds/{guild_id}/roles", Method.Post)
                 .AddUrlSegment("guild_id", guildId)
-                .AddJsonBody(body);
+                .AddDto(body);
 
             return await _restClient.ExecAsync<UpdateResult>(request);
         }
@@ -540,7 +540,7 @@ namespace QQChannelSharp.OpenApi
             };
             var request = new RestRequest("/channels/{channel_id}/settingguide", Method.Post)
                 .AddUrlSegment("channel_id", channelId)
-                .AddJsonBody(body);
+                .AddDto(body);
             return await _restClient.ExecAsync<Message>(request);
         }
 
@@ -555,7 +555,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/channels/{channel_id}/members/{user_id}/permissions", Method.Put)
                 .AddUrlSegment("channel_id", channelId)
                 .AddUrlSegment("user_id", userId)
-                .AddJsonBody(channelPermissions);
+                .AddDto(channelPermissions);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -570,7 +570,7 @@ namespace QQChannelSharp.OpenApi
             var request = new RestRequest("/channels/{channel_id}/roles/{role_id}/permissions", Method.Put)
                 .AddUrlSegment("channel_id", channelId)
                 .AddUrlSegment("role_id", roleId)
-                .AddJsonBody(channelPermissions);
+                .AddDto(channelPermissions);
             return await _restClient.ExecAsync<EmptyObject>(request);
         }
 
@@ -586,7 +586,7 @@ namespace QQChannelSharp.OpenApi
         {
             var request = new RestRequest("/guilds/{guild_id}/api_permission/demand", Method.Post)
                 .AddUrlSegment("guild_id", guildId)
-                .AddJsonBody(demand);
+                .AddDto(demand);
             return await _restClient.ExecAsync<APIPermissionDemand>(request);
         }
 
