@@ -1,4 +1,5 @@
-﻿using QQChannelSharp.Dto.WebSocket;
+﻿using QQChannelSharp.Converters;
+using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Exceptions;
 using QQChannelSharp.Extensions;
@@ -11,6 +12,13 @@ namespace QQChannelSharp.Client
 {
     public class WsClient : IWebSocketClient
     {
+        private static readonly JsonSerializerOptions _options;
+        static WsClient()
+        {
+            _options = new();
+            _options.Converters.Add(new EmptyStringConverter());
+        }
+
         private bool _disposed;
         private Task? _heartbeatTask;
         private Task? _listeningTask;
@@ -214,7 +222,7 @@ namespace QQChannelSharp.Client
 
         public async Task WriteAsync(WebSocketPayload payload)
         {
-            string dataJson = JsonSerializer.Serialize(payload);
+            string dataJson = JsonSerializer.Serialize(payload, _options);
             try
             {
                 await _webSocket
@@ -237,7 +245,7 @@ namespace QQChannelSharp.Client
             if (string.IsNullOrWhiteSpace(message))
                 return false;
             //Console.WriteLine("{0}_WS: {1}", _session.Id, message);
-            WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message)
+            WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message, _options)
                 ?? throw new ArgumentException("无法解析Payload");
             payload.RawMessage = message;
             SaveSeq(payload.Seq);
