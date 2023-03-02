@@ -16,6 +16,7 @@ namespace QQChannelSharp.Interfaces
         IPinsApi, IRoleApi,
         IScheduleApi, IUserApi,
         IWebHookApi,
+        IWebSocketApi,
 
         IDisposable
     {

@@ -13,10 +13,12 @@ using QQChannelSharp.Dto.Options;
 using QQChannelSharp.Dto.Pager;
 using QQChannelSharp.Dto.Roles;
 using QQChannelSharp.Dto.Schedules;
+using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using RestSharp;
+using System.Threading.Channels;
 using Channel = QQChannelSharp.Dto.Channels.Channel;
 
 namespace QQChannelSharp.OpenApi
@@ -628,6 +630,12 @@ namespace QQChannelSharp.OpenApi
                 }
             }
             return await _restClient.ExecAsync<EmptyObject>(request);
+        }
+
+        public async Task<HttpResult<WebsocketAP>> GetWebSocketApAsync()
+        {
+            var request = new RestRequest("/gateway/bot", Method.Get);
+            return await _restClient.ExecAsync<WebsocketAP>(request);
         }
 
         public void Dispose()
