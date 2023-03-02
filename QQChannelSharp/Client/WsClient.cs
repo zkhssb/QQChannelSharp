@@ -3,6 +3,7 @@ using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Exceptions;
 using QQChannelSharp.Extensions;
+using QQChannelSharp.Interfaces;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 using System.Text;
