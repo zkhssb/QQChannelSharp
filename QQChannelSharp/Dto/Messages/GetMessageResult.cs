@@ -1,5 +1,4 @@
-﻿using QQChannelSharp.Dto.Message;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace QQChannelSharp.Dto.Messages
 {
