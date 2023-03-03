@@ -10,6 +10,8 @@ using QQChannelSharp.WebSocket;
 
 namespace QQChannelSharp.Events;
 
+public delegate Task QQChannelAsyncCall
+
 /// <summary>
 /// Bot鉴权成功事件
 /// </summary>
