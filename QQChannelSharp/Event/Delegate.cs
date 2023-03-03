@@ -6,11 +6,13 @@ using QQChannelSharp.Dto.Interactions;
 using QQChannelSharp.Dto.Members;
 using QQChannelSharp.Dto.Message;
 using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.EventArgs;
 using QQChannelSharp.WebSocket;
 
 namespace QQChannelSharp.Events;
 
-public delegate Task QQChannelAsyncCall
+public delegate Task EventAsyncCallBackHandler<in TEventArgs>(TEventArgs eventArgs)
+    where TEventArgs : BaseChannelEventArgs;
 
 /// <summary>
 /// Bot鉴权成功事件
