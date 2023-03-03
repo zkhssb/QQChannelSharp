@@ -6,6 +6,10 @@
     public enum StateChangeType
     {
         /// <summary>
+        /// 加入、成员加入、表情表态添加
+        /// </summary>
+        Add,
+        /// <summary>
         /// 创建、开始、被添加到频道
         /// </summary>
         Create,
