@@ -1,4 +1,5 @@
-﻿using QQChannelSharp.Dto.WebSocket;
+﻿using QQChannelSharp.Converters;
+using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using System.Text.Json;
 
@@ -6,6 +7,13 @@ namespace QQChannelSharp.Extensions
 {
     public static class WebSocketPayloadExtension
     {
+        private static readonly JsonSerializerOptions _options;
+        static WebSocketPayloadExtension()
+        {
+            _options = new();
+            _options.Converters.Add(new EmptyStringConverter());
+        }
+
         /// <summary>
         /// 获取Payload的data
         /// </summary>
@@ -19,7 +27,7 @@ namespace QQChannelSharp.Extensions
                 throw new ArgumentNullException(nameof(payload));
             if (payload.Data is not JsonElement)
                 throw new ArgumentException(nameof(payload.Data));
-            return JsonSerializer.Deserialize<TData>((JsonElement)payload.Data)!;
+            return JsonSerializer.Deserialize<TData>((JsonElement)payload.Data, _options)!;
         }
         public static WebSocketPayload WithData(this WebSocketPayload payload, object data)
         {
