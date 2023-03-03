@@ -4,7 +4,8 @@ namespace QQChannelSharp.Logger
 {
     public static class Log
     {
-        private static IConsoleLogger _consoleLogger = new ConsoleLogger();
+        private static readonly IConsoleLogger _defaultLogger = new ConsoleLogger();
+        private static IConsoleLogger _consoleLogger = _defaultLogger;
         public static LogConfiguration Configuration { get; } = new LogConfiguration();
         /// <summary>
         /// 设置新的Logger实例 (默认为自带的ConsoleLogger)
@@ -13,6 +14,13 @@ namespace QQChannelSharp.Logger
         public static void SetLogger(IConsoleLogger logger)
         {
             _consoleLogger = logger;
+        }
+        /// <summary>
+        /// 还原Logger为ConsoleLogger
+        /// </summary>
+        public static void SetLogger()
+        {
+            _consoleLogger = _defaultLogger;
         }
         public static void LogOut(LogLevel level, string source, string message)
         {

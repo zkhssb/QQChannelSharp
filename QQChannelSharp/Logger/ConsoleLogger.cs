@@ -32,7 +32,9 @@ namespace QQChannelSharp.Logger
                 Console.BackgroundColor = color;
                 Console.Write(" ");
                 Console.ResetColor();
+                Console.ForegroundColor = color;
                 Console.Write(" " + logLevel + " ");
+                Console.ResetColor();
                 Console.Write(DateTime.Now.ToString());
                 Console.Write(" " + getTypeName() + "[" + source + "]");
                 Console.Write("\n");
