@@ -1,7 +1,65 @@
 ﻿namespace QQChannelSharp.Enumerations
 {
     /// <summary>
-    /// 事件类型 (只用于在Payload扩展 GetEventType 后判断类型)
+    /// 状态变化类型
+    /// </summary>
+    public enum StateChangeType
+    {
+        /// <summary>
+        /// 创建、开始、被添加到频道
+        /// </summary>
+        Create,
+        /// <summary>
+        /// 删除、退出、解散事件
+        /// </summary>
+        Delete,
+        /// <summary>
+        /// 信息更新
+        /// </summary>
+        Update
+    }
+
+    /// <summary>
+    /// 消息审核类型
+    /// </summary>
+    public enum MessageAuditType
+    {
+        /// <summary>
+        /// 通过
+        /// </summary>
+        Pass,
+
+        /// <summary>
+        /// 不通过
+        /// </summary>
+        Reject
+    }
+
+    /// <summary>
+    /// 音频事件类型
+    /// </summary>
+    public enum AudioEventType
+    {
+        /// <summary>
+        /// 音频开始播放
+        /// </summary>
+        Start,
+        /// <summary>
+        /// 音频结束
+        /// </summary>
+        Finish,
+        /// <summary>
+        /// 机器人上麦
+        /// </summary>
+        OnMic,
+        /// <summary>
+        /// 机器人下麦
+        /// </summary>
+        OffMic,
+    }
+
+    /// <summary>
+    /// 事件类型表 (只用于在Payload扩展 GetEventType 后判断类型)
     /// </summary>
     public enum EventType
     {
