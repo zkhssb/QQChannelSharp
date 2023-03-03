@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Logger;
+using System.Linq;
 
 namespace QQChannelSharp.OpenApi.HttpHandler
 {
@@ -10,7 +11,13 @@ namespace QQChannelSharp.OpenApi.HttpHandler
         {
             var result = await base.SendAsync(request, cancellationToken);
             string content = string.Empty;
-            string traceId = result.Headers.GetValues("X-Tps-trace-ID").FirstOrDefault() ?? string.Empty;
+            string traceId = string.Empty;
+
+            if (result.Headers.TryGetValues("X-Tps-trace-ID", out var value))
+            {
+                traceId = value.FirstOrDefault() ?? string.Empty;
+            }
+
             if (result.Content != null)
                 content = await result.Content.ReadAsStringAsync();
             if (result.IsSuccessStatusCode)
