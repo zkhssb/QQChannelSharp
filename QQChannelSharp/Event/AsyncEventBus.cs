@@ -7,6 +7,7 @@ using QQChannelSharp.Dto.Members;
 using QQChannelSharp.Dto.Message;
 using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
+using QQChannelSharp.EventArgs;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
@@ -31,27 +32,27 @@ namespace QQChannelSharp.Events
         /// </summary>
         private readonly Dictionary<OPCode, Dictionary<string, AsyncEventHandlerFunction>> _eventParseFunc;
 
-        public event ErrorNotifyHandler? ErrorNotify;
-        public event PlainEventHandler? PlainEvent;
-        public event GuildEventHandler? GuildEvent;
-        public event GuildMemberEventHandler? GuildMemberEvent;
-        public event ChannelEventHandler? ChannelEvent;
-        public event MessageEventHandler? MessageEvent;
-        public event MessageDeleteEventHandler? MessageDeleteEvent;
-        public event PublicMessageDeleteEventHandler? PublicMessageDeleteEvent;
-        public event DirectMessageDeleteEventHandler? DirectMessageDeleteEvent;
-        public event MessageReactionEventHandler? MessageReactionEvent;
-        public event ATMessageEventHandler? ATMessageEvent;
-        public event DirectMessageEventHandler? DirectMessageEvent;
-        public event AudioEventHandler? AudioEvent;
-        public event MessageAuditEventHandler? MessageAuditEvent;
-        public event ThreadEventHandler? ThreadEvent;
-        public event PostEventHandler? PostEvent;
-        public event ReplyEventHandler? ReplyEvent;
-        public event ForumAuditEventHandler? ForumAuditEvent;
-        public event InteractionEventHandler? InteractionEvent;
-        public event ReadyEventHandler? Ready;
-        public event ResumedEventHandler? Resumed;
+        public event EventAsyncCallBackHandler<ReadyEvent>? Ready;
+        public event EventAsyncCallBackHandler<ResumedEvent>? Resumed;
+        public event EventAsyncCallBackHandler<ErrorNotifyEvent>? ErrorNotify;
+        public event EventAsyncCallBackHandler<PlainEvent>? PlainEvent;
+        public event EventAsyncCallBackHandler<GuildEvent>? GuildEvent;
+        public event EventAsyncCallBackHandler<GuildMemberEvent>? GuildMemberEvent;
+        public event EventAsyncCallBackHandler<ChannelEvent>? ChannelEvent;
+        public event EventAsyncCallBackHandler<MessageEvent>? MessageEvent;
+        public event EventAsyncCallBackHandler<MessageDeleteEvent>? MessageDeleteEvent;
+        public event EventAsyncCallBackHandler<PublicMessageDeleteEvent>? PublicMessageDeleteEvent;
+        public event EventAsyncCallBackHandler<DirectMessageDeleteEvent>? DirectMessageDeleteEvent;
+        public event EventAsyncCallBackHandler<MessageReactionEvent>? MessageReactionEvent;
+        public event EventAsyncCallBackHandler<ATMessageEvent>? ATMessageEvent;
+        public event EventAsyncCallBackHandler<DirectMessageEvent>? DirectMessageEvent;
+        public event EventAsyncCallBackHandler<AudioEvent>? AudioEvent;
+        public event EventAsyncCallBackHandler<MessageAuditEvent>? MessageAuditEvent;
+        public event EventAsyncCallBackHandler<ThreadEvent>? ThreadEvent;
+        public event EventAsyncCallBackHandler<PostEvent>? PostEvent;
+        public event EventAsyncCallBackHandler<ReplyEvent>? ReplyEvent;
+        public event EventAsyncCallBackHandler<ForumAuditEvent>? ForumAuditEvent;
+        public event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
 
         public AsyncEventBus()
         {
@@ -249,10 +250,15 @@ namespace QQChannelSharp.Events
             if (ErrorNotify != null)
                 await ErrorNotify.Invoke(new()
                 {
-                    Code = ex.ErrorCode,
-                    Message = ex.Message,
-                    Type = ErrorType.WebSocketError
-                }, session);
+                    Payload = new(),
+                    Error = new()
+                    {
+                        Code = ex.ErrorCode,
+                        Message = ex.Message,
+                        Type = ErrorType.WebSocketError
+                    },
+                    Session = session
+                });
         }
 
         public void Dispose()
@@ -267,7 +273,11 @@ namespace QQChannelSharp.Events
         private async Task PlainEventHandler(WebSocketPayload payload, Session session)
         {
             if (PlainEvent != null)
-                await PlainEvent.Invoke(payload, session);
+                await PlainEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session
+                });
         }
 
         private async Task ErrorNotifyHandler(WebSocketPayload? payload, Session session)
@@ -275,124 +285,243 @@ namespace QQChannelSharp.Events
             if (ErrorNotify != null)
                 await ErrorNotify.Invoke(new()
                 {
-                    Code = 0,
-                    Message = "invalid session: please check the intents or token",
-                    Type = ErrorType.InvalidSession
-                }, session);
+                    Payload = payload ?? new(),
+                    Session = session,
+                    Error = new()
+                    {
+                        Code = 0,
+                        Message = "invalid session: please check the intents or token",
+                        Type = ErrorType.InvalidSession
+                    }
+                });
         }
 
         private async Task ReadyHandler(WebSocketPayload payload, Session session)
         {
             if (Ready != null)
-                await Ready.Invoke(payload, payload.GetData<WSReadyData>(), session);
+                await Ready.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    ReadyData = payload.GetData<WSReadyData>()
+                });
         }
 
         private async Task ResumedHandler(WebSocketPayload payload, Session session)
         {
             if (Resumed != null)
-                await Resumed.Invoke(payload, payload.GetData<WSResumeData>(), session);
+                await Resumed.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    ResumeData = payload.GetData<WSResumeData>()
+                });
         }
 
         private async Task GuildHandler(WebSocketPayload payload, Session session)
         {
             if (GuildEvent != null)
-                await GuildEvent.Invoke(payload, payload.GetData<Guild>(), session);
+                await GuildEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    EventGuild = payload.GetData<Guild>(),
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType(),
+                });
         }
 
         private async Task ChannelHandler(WebSocketPayload payload, Session session)
         {
             if (ChannelEvent != null)
-                await ChannelEvent.Invoke(payload, payload.GetData<Channel>(), session);
+                await ChannelEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType(),
+                    Channel = payload.GetData<Channel>(),
+                });
         }
 
         private async Task GuildMemberHandler(WebSocketPayload payload, Session session)
         {
             if (GuildMemberEvent != null)
-                await GuildMemberEvent.Invoke(payload, payload.GetData<Member>(), session);
+                await GuildMemberEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType(),
+                    Member = payload.GetData<Member>(),
+                });
         }
 
         private async Task MessageHandler(WebSocketPayload payload, Session session)
         {
             if (MessageEvent != null)
-                await MessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+                await MessageEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Message = payload.GetData<Message>(),
+                });
         }
 
         private async Task MessageDeleteHandler(WebSocketPayload payload, Session session)
         {
             if (MessageDeleteEvent != null)
-                await MessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
+                await MessageDeleteEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    MessageDelete = payload.GetData<MessageDelete>(),
+                });
         }
 
         private async Task MessageReactionHandler(WebSocketPayload payload, Session session)
         {
             if (MessageReactionEvent != null)
-                await MessageReactionEvent.Invoke(payload, payload.GetData<MessageReaction>(), session);
+                await MessageReactionEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType(),
+                    Reaction = payload.GetData<MessageReaction>(),
+                });
         }
 
         private async Task AtMessageHandler(WebSocketPayload payload, Session session)
         {
             if (ATMessageEvent != null)
-                await ATMessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+                await ATMessageEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Message = payload.GetData<Message>(),
+                });
         }
 
         private async Task PublicMessageDeleteHandler(WebSocketPayload payload, Session session)
         {
             if (PublicMessageDeleteEvent != null)
-                await PublicMessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
+                await PublicMessageDeleteEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    MessageDelete = payload.GetData<MessageDelete>(),
+                });
         }
 
         private async Task DirectMessageHandler(WebSocketPayload payload, Session session)
         {
             if (DirectMessageEvent != null)
-                await DirectMessageEvent.Invoke(payload, payload.GetData<Message>(), session);
+                await DirectMessageEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Message = payload.GetData<Message>(),
+                });
         }
 
         private async Task DirectMessageDeleteHandler(WebSocketPayload payload, Session session)
         {
             if (DirectMessageDeleteEvent != null)
-                await DirectMessageDeleteEvent.Invoke(payload, payload.GetData<MessageDelete>(), session);
+                await DirectMessageDeleteEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    MessageDelete = payload.GetData<MessageDelete>(),
+                });
         }
 
         private async Task AudioHandler(WebSocketPayload payload, Session session)
         {
             if (AudioEvent != null)
-                await AudioEvent.Invoke(payload, payload.GetData<AudioAction>(), session);
+                await AudioEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetAudioEventType(),
+                    Action = payload.GetData<AudioAction>(),
+                });
         }
 
         private async Task MessageAuditHandler(WebSocketPayload payload, Session session)
         {
             if (MessageAuditEvent != null)
-                await MessageAuditEvent.Invoke(payload, payload.GetData<MessageAudit>(), session);
+                await MessageAuditEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Result = payload.GetEventType().GetMessageAuditType(),
+                    Audit = payload.GetData<MessageAudit>(),
+                });
         }
 
         private async Task ThreadHandler(WebSocketPayload payload, Session session)
         {
             if (ThreadEvent != null)
-                await ThreadEvent.Invoke(payload, payload.GetData<Dto.Forum.Thread>(), session);
+                await ThreadEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Thread = payload.GetData<Dto.Forum.Thread>(),
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType()
+                });
         }
 
         private async Task PostHandler(WebSocketPayload payload, Session session)
         {
             if (PostEvent != null)
-                await PostEvent.Invoke(payload, payload.GetData<Post>(), session);
+                await PostEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Post = payload.GetData<Dto.Forum.Post>(),
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType()
+                });
         }
 
         private async Task ReplyHandler(WebSocketPayload payload, Session session)
         {
             if (ReplyEvent != null)
-                await ReplyEvent.Invoke(payload, payload.GetData<Reply>(), session);
+                await ReplyEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Reply = payload.GetData<Dto.Forum.Reply>(),
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType()
+                });
         }
 
         private async Task ForumAuditHandler(WebSocketPayload payload, Session session)
         {
             if (ForumAuditEvent != null)
-                await ForumAuditEvent.Invoke(payload, payload.GetData<ForumAuditResult>(), session);
+                await ForumAuditEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Result = payload.GetData<ForumAuditResult>(),
+                });
         }
 
         private async Task InteractionHandler(WebSocketPayload payload, Session session)
         {
             if (InteractionEvent != null)
-                await InteractionEvent.Invoke(payload, payload.GetData<Interaction>(), session);
+                await InteractionEvent.Invoke(new()
+                {
+                    Payload = payload,
+                    Session = session,
+                    Interaction = payload.GetData<Interaction>(),
+                    EventType = payload.GetEventType(),
+                    Type = payload.GetEventType().GetStateChangeType()
+                });
         }
     }
 }

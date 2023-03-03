@@ -6,6 +6,10 @@
     public enum StateChangeType
     {
         /// <summary>
+        /// 无状态或不确定状态,需要使用EventType或Payload.EventType来判断类型
+        /// </summary>
+        None,
+        /// <summary>
         /// 加入、成员加入、表情表态添加
         /// </summary>
         Add,

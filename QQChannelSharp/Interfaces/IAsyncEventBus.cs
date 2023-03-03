@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.EventArgs;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 
@@ -9,87 +10,87 @@ namespace QQChannelSharp.Events
         /// <summary>
         /// 机器人鉴权成功
         /// </summary>
-        event ReadyEventHandler? Ready;
+        event EventAsyncCallBackHandler<ReadyEvent>? Ready;
         /// <summary>
         /// 机器人重连成功
         /// </summary>
-        event ResumedEventHandler? Resumed;
+        event EventAsyncCallBackHandler<ResumedEvent>? Resumed;
         /// <summary>
         /// 错误通知
         /// </summary>
-        event ErrorNotifyHandler? ErrorNotify;
+        event EventAsyncCallBackHandler<ErrorNotifyEvent>? ErrorNotify;
         /// <summary>
         /// 普通事件
         /// </summary>
-        event PlainEventHandler? PlainEvent;
+        event EventAsyncCallBackHandler<PlainEvent>? PlainEvent;
         /// <summary>
         /// 频道事件
         /// </summary>
-        event GuildEventHandler? GuildEvent;
+        event EventAsyncCallBackHandler<GuildEvent>? GuildEvent;
         /// <summary>
         /// 频道成员事件
         /// </summary>
-        event GuildMemberEventHandler? GuildMemberEvent;
+        event EventAsyncCallBackHandler<GuildMemberEvent>? GuildMemberEvent;
         /// <summary>
         /// 子频道事件
         /// </summary>
-        event ChannelEventHandler? ChannelEvent;
+        event EventAsyncCallBackHandler<ChannelEvent>? ChannelEvent;
         /// <summary>
         /// 私域消息事件
         /// </summary>
-        event MessageEventHandler? MessageEvent;
+        event EventAsyncCallBackHandler<MessageEvent>? MessageEvent;
         /// <summary>
         /// 私域消息撤回事件
         /// </summary>
-        event MessageDeleteEventHandler? MessageDeleteEvent;
+        event EventAsyncCallBackHandler<MessageDeleteEvent>? MessageDeleteEvent;
         /// <summary>
         /// 公域消息撤回事件
         /// </summary>
-        event PublicMessageDeleteEventHandler? PublicMessageDeleteEvent;
+        event EventAsyncCallBackHandler<PublicMessageDeleteEvent>? PublicMessageDeleteEvent;
         /// <summary>
         /// 私信消息撤回事件
         /// </summary>
-        event DirectMessageDeleteEventHandler? DirectMessageDeleteEvent;
+        event EventAsyncCallBackHandler<DirectMessageDeleteEvent>? DirectMessageDeleteEvent;
         /// <summary>
         /// 消息表情表态事件
         /// </summary>
-        event MessageReactionEventHandler? MessageReactionEvent;
+        event EventAsyncCallBackHandler<MessageReactionEvent>? MessageReactionEvent;
         /// <summary>
         /// @消息事件
         /// </summary>
-        event ATMessageEventHandler? ATMessageEvent;
+        event EventAsyncCallBackHandler<ATMessageEvent>? ATMessageEvent;
         /// <summary>
         /// 私信消息事件
         /// </summary>
-        event DirectMessageEventHandler? DirectMessageEvent;
+        event EventAsyncCallBackHandler<DirectMessageEvent>? DirectMessageEvent;
         /// <summary>
         /// 音频事件
         /// </summary>
-        event AudioEventHandler? AudioEvent;
+        event EventAsyncCallBackHandler<AudioEvent>? AudioEvent;
         /// <summary>
         /// 消息审核事件
         /// </summary>
-        event MessageAuditEventHandler? MessageAuditEvent;
+        event EventAsyncCallBackHandler<MessageAuditEvent>? MessageAuditEvent;
         /// <summary>
         /// 论坛主题事件
         /// </summary>
-        event ThreadEventHandler? ThreadEvent;
+        event EventAsyncCallBackHandler<ThreadEvent>? ThreadEvent;
         /// <summary>
         /// 论坛主题帖子事件 (评论)
         /// </summary>
-        event PostEventHandler? PostEvent;
+        event EventAsyncCallBackHandler<PostEvent>? PostEvent;
         /// <summary>
         /// 论坛主题帖子回复事件 (回复评论)
         /// </summary>
-        event ReplyEventHandler? ReplyEvent;
+        event EventAsyncCallBackHandler<ReplyEvent>? ReplyEvent;
         /// <summary>
         /// 论坛审核事件
         /// </summary>
-        event ForumAuditEventHandler? ForumAuditEvent;
+        event EventAsyncCallBackHandler<ForumAuditEvent>? ForumAuditEvent;
         /// <summary>
         /// 互动事件
         /// </summary>
-        event InteractionEventHandler? InteractionEvent;
+        event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
 
         /// <summary>
         /// 推送事件
