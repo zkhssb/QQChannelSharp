@@ -18,7 +18,6 @@ using QQChannelSharp.Enumerations;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using RestSharp;
-using System.Threading.Channels;
 using Channel = QQChannelSharp.Dto.Channels.Channel;
 
 namespace QQChannelSharp.OpenApi

@@ -3,7 +3,6 @@ using QQChannelSharp.Interfaces;
 using QQChannelSharp.OpenApi.HttpHandler;
 using RestSharp;
 using RestSharp.Authenticators.OAuth2;
-using System.Net;
 
 namespace QQChannelSharp.OpenApi
 {

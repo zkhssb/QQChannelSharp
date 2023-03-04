@@ -1,5 +1,4 @@
 ﻿using QQChannelSharp.Logger;
-using System.Linq;
 
 namespace QQChannelSharp.OpenApi.HttpHandler
 {
