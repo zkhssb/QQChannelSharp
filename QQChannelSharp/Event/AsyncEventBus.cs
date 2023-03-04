@@ -1,4 +1,5 @@
-﻿using QQChannelSharp.Dto;
+﻿using QQChannelSharp.Attributes;
+using QQChannelSharp.Dto;
 using QQChannelSharp.Dto.Audio;
 using QQChannelSharp.Dto.Channels;
 using QQChannelSharp.Dto.Forum;
@@ -9,8 +10,10 @@ using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.EventArgs;
 using QQChannelSharp.Extensions;
+using QQChannelSharp.Logger;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
+using System.Reflection;
 
 namespace QQChannelSharp.Events
 {
@@ -522,6 +525,60 @@ namespace QQChannelSharp.Events
                     EventType = payload.GetEventType(),
                     Type = payload.GetEventType().GetStateChangeType()
                 });
+        }
+
+        public void Subscribe(object listener)
+        {
+            var handlers = listener.GetType()
+                .GetMethods()
+                .Where(e => e.GetCustomAttribute(typeof(EventHandlerAttribute)) != null)
+                .ToArray();
+            if (handlers.Length <= 0)
+                throw new ArgumentException("对象没有任何EventHandlerAttribute特性标记");
+
+            // 开始尝试注册
+            foreach (var handler in handlers)
+            {
+                var parameters = handler.GetParameters();
+                if (1 < parameters.Length)
+                {
+                    // 方法只能有一个参数,且必须继承BaseChannelEventArgs
+                    Log.LogError("Subscribe", $"{listener.GetType().FullName}.{handler.Name}只能有一个参数");
+                }
+                else if (CheckMethod(handler))
+                {
+                    if (handler.ReturnType != typeof(ValueTask))
+                        Log.LogError("Subscribe", $"{listener.GetType().FullName}.{handler.Name}的返回值必须是ValueTask!");
+
+                    foreach (var item in GetType().GetEvents())
+                    {
+                        // 获取事件的泛型类型
+                        var genericType = item.EventHandlerType!.GenericTypeArguments[0];
+                        if (genericType != parameters[0].ParameterType) continue; // 如果事件泛型类型不是要订阅的事件类型就跳出
+                        MethodInfo addMethod = item.AddMethod!;
+                        Delegate dele = Delegate.CreateDelegate(item.EventHandlerType, listener, handler);
+                        item.AddEventHandler(this, dele);
+                    }
+
+                }
+                else
+                {
+                    // 方法只能有一个参数,且必须继承BaseChannelEventArgs
+                    Log.LogError("Subscribe", $"{listener.GetType().FullName}.{handler.Name}的唯一参数必须继承BaseChannelEventArgs!");
+                }
+            }
+
+            // 检查方法是否合法
+            static bool CheckMethod(MethodInfo method)
+            {
+                ParameterInfo[] parameters = method.GetParameters();
+
+                // 如果长度不是1 那么不符合, 方法只能有一个参数
+                // 如果唯一的参数不继承BaseChannelEventArgs 那么代表这不是个事件
+                return
+                    parameters.Length == 1
+                    && parameters[0].ParameterType.IsAssignableTo(typeof(BaseChannelEventArgs));
+            }
         }
     }
 }

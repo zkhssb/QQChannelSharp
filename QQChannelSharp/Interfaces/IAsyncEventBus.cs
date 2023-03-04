@@ -100,5 +100,10 @@ namespace QQChannelSharp.Events
         /// 推送WebSocket错误
         /// </summary>
         Task PublishWebSocketErrorAsync(Session session, WebSocketException ex);
+
+        /// <summary>
+        /// 注册一个监听器
+        /// </summary>
+        void Subscribe(object listener);
     }
 }
