@@ -5,7 +5,7 @@ namespace QQChannelSharp.Events;
 /// <summary>
 /// 事件异步回调
 /// </summary>
-public delegate Task EventAsyncCallBackHandler<in TEventArgs>(TEventArgs eventArgs)
+public delegate ValueTask EventAsyncCallBackHandler<in TEventArgs>(TEventArgs eventArgs)
     where TEventArgs : BaseChannelEventArgs;
 
 /// <summary>
