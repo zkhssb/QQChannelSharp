@@ -91,6 +91,10 @@ namespace QQChannelSharp.Events
         /// 互动事件
         /// </summary>
         event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
+        /// <summary>
+        /// 监听事件的处理器发生异常时的事件
+        /// </summary>
+        event EventAsyncCallBackHandler<HandlerErrorEvent>? HandlerErrorEvent;
 
         /// <summary>
         /// 推送事件

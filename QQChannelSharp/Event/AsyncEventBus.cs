@@ -56,6 +56,7 @@ namespace QQChannelSharp.Events
         public event EventAsyncCallBackHandler<ReplyEvent>? ReplyEvent;
         public event EventAsyncCallBackHandler<ForumAuditEvent>? ForumAuditEvent;
         public event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
+        public event EventAsyncCallBackHandler<HandlerErrorEvent>? HandlerErrorEvent;
 
         public AsyncEventBus()
         {
@@ -233,18 +234,35 @@ namespace QQChannelSharp.Events
         }
         public async Task PublishAsync(WebSocketPayload payload, Session session)
         {
-            // 查找处理字典中有没有这个事件的处理器
-            if (_eventParseFunc.TryGetValue(payload.OPCode, out var message))
+            try
             {
-                if (message.TryGetValue(payload.EventType?.ToUpper() ?? string.Empty, out AsyncEventHandlerFunction? func)
-                    && null != func)
+                // 查找处理字典中有没有这个事件的处理器
+                if (_eventParseFunc.TryGetValue(payload.OPCode, out var message))
                 {
-                    await func(payload, session);
+                    if (message.TryGetValue(payload.EventType?.ToUpper() ?? string.Empty, out AsyncEventHandlerFunction? func)
+                        && null != func)
+                    {
+                        await func(payload, session);
+                    }
+                }
+                else // 如果没有就通知普通消息事件
+                {
+                    await PlainEventHandler(payload, session);
                 }
             }
-            else // 如果没有就通知普通消息事件
+            catch (Exception ex)
             {
-                await PlainEventHandler(payload, session);
+                if (null != HandlerErrorEvent)
+                    await HandlerErrorEvent(new()
+                    {
+                        Exception = ex,
+                        Payload = payload,
+                        Session = session
+                    });
+                else
+                {
+                    Log.LogFatal("EventBus", ex.ToString(), false);
+                }
             }
         }
 
