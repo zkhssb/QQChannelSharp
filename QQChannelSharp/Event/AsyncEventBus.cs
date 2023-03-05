@@ -555,9 +555,7 @@ namespace QQChannelSharp.Events
                         // 获取事件的泛型类型
                         var genericType = item.EventHandlerType!.GenericTypeArguments[0];
                         if (genericType != parameters[0].ParameterType) continue; // 如果事件泛型类型不是要订阅的事件类型就跳出
-                        MethodInfo addMethod = item.AddMethod!;
-                        Delegate dele = Delegate.CreateDelegate(item.EventHandlerType, listener, handler);
-                        item.AddEventHandler(this, dele);
+                        item.AddEventHandler(this, Delegate.CreateDelegate(item.EventHandlerType, listener, handler));
                     }
 
                 }
