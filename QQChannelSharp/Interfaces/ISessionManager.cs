@@ -13,6 +13,12 @@ namespace QQChannelSharp.Interfaces
         /// </summary>
         /// <returns></returns>
         Task StartAsync();
+
+        /// <summary>
+        /// 启动SessionManager (阻塞)
+        /// </summary>
+        /// <returns></returns>
+        Task StartAndWait();
         /// <summary>
         /// 在线的Session字典
         /// <br/>

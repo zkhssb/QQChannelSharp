@@ -254,6 +254,34 @@ namespace QQChannelSharp.Sessions
             }
         }
 
+
+        public async Task StartAndWait()
+        {
+            for (int i = 0; i < _apInfo.Shards; i++) // 开始往管道里塞入初始的数据
+            {
+                await _sessionChan.WriteAsync(new Session()
+                {
+                    Guid = Guid.NewGuid(),
+                    BotInfo = _botInfo,
+                    Intent = _botInfo.Intents,
+                    Id = string.Empty,
+                    LastSeq = 0,
+                    Url = _apInfo.Url,
+                    Shard = new()
+                    {
+                        ShardID = i,
+                        ShardCount = _apInfo.Shards
+                    }
+                }); // 如果管道已满,就会阻塞,直到管道内有剩余空间后才会继续写
+            }
+
+            // 阻塞的方式启动 (直接方法内读取管道)
+            while (!_disposed)
+            {
+                Session session = await _sessionChan.ReadAsync();
+                await NeedConnect(session);
+            }
+        }
         public void Dispose()
         {
             Dispose(true);
