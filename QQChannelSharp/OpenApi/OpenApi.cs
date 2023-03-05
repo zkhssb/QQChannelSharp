@@ -24,6 +24,7 @@ namespace QQChannelSharp.OpenApi
 {
     public sealed class OpenApi : IOpenApi
     {
+        private bool _disposed;
         private readonly HttpClient _httpClient;
         private readonly RestClient _restClient;
 
@@ -637,10 +638,20 @@ namespace QQChannelSharp.OpenApi
             return await _restClient.ExecAsync<WebsocketAP>(request);
         }
 
-        public void Dispose()
+        private void Dispose()
         {
-            _restClient?.Dispose();
-            _httpClient?.Dispose();
+            lock (this)
+            {
+                if (_disposed) return;
+                _restClient?.Dispose();
+                _httpClient?.Dispose();
+                _disposed = true;
+            }
+        }
+
+        ~OpenApi()
+        {
+            Dispose();
         }
 
         public int Version()
