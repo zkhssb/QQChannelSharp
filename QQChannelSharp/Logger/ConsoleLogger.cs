@@ -5,7 +5,6 @@ namespace QQChannelSharp.Logger
 {
     public class ConsoleLogger : IConsoleLogger
     {
-        private object _consoleLock = new object();
         private string getTypeName()
         {
             StackFrame frame = new StackFrame(4);
@@ -27,23 +26,20 @@ namespace QQChannelSharp.Logger
         }
         private void log(LogLevel logLevel, string source, object message, ConsoleColor color)
         {
-            lock (_consoleLock)
-            {
-                Console.BackgroundColor = color;
-                Console.Write(" ");
-                Console.ResetColor();
-                Console.ForegroundColor = color;
-                Console.Write(" " + logLevel + " ");
-                Console.ResetColor();
-                Console.Write(DateTime.Now.ToString());
-                Console.Write(" " + getTypeName() + "[" + source + "]");
-                Console.Write("\n");
-                Console.BackgroundColor = color;
-                Console.Write(" ");
-                Console.ResetColor();
-                Console.Write(" ");
-                Console.WriteLine(message);
-            }
+            Console.BackgroundColor = color;
+            Console.Write(" ");
+            Console.ResetColor();
+            Console.ForegroundColor = color;
+            Console.Write(" " + logLevel + " ");
+            Console.ResetColor();
+            Console.Write(DateTime.Now.ToString());
+            Console.Write(" " + getTypeName() + "[" + source + "]");
+            Console.Write("\n");
+            Console.BackgroundColor = color;
+            Console.Write(" ");
+            Console.ResetColor();
+            Console.Write(" ");
+            Console.WriteLine(message);
         }
         public void Log(LogLevel level, string source, object message)
         {
