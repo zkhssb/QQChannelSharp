@@ -13,6 +13,7 @@ using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
 using QQChannelSharp.WebSocket;
+using System.ComponentModel;
 using System.Net.WebSockets;
 using System.Reflection;
 
@@ -30,6 +31,79 @@ namespace QQChannelSharp.Events
     // 内部维护一个事件监听字典,用来通知事件
     public class AsyncEventBus : IAsyncEventBus
     {
+        private static readonly Dictionary<string, Intents> _intentsMapping = new()
+        {
+            {
+                "GuildEvent",
+                Enumerations.Intents.GUILDS
+            },
+            {
+                "GuildMemberEvent",
+                Enumerations.Intents.GUILD_MEMBERS
+            },
+            {
+                "ChannelEvent",
+                Enumerations.Intents.GUILDS
+            },
+            {
+                "MessageEvent",
+                Enumerations.Intents.GUILD_MESSAGES
+            },
+            {
+                "MessageDeleteEvent",
+                Enumerations.Intents.GUILD_MESSAGES
+            },
+            {
+                "PublicMessageDeleteEvent",
+                Enumerations.Intents.PUBLIC_GUILD_MESSAGES
+            },
+            {
+                "DirectMessageDeleteEvent",
+                Enumerations.Intents.DIRECT_MESSAGE
+            },
+            {
+                "MessageReactionEvent",
+                Enumerations.Intents.GUILD_MESSAGE_REACTIONS
+            },
+            {
+                "ATMessageEvent",
+                Enumerations.Intents.PUBLIC_GUILD_MESSAGES
+            },
+            {
+                "DirectMessageEvent",
+                Enumerations.Intents.DIRECT_MESSAGE
+            },
+            {
+                "AudioEvent",
+                Enumerations.Intents.AUDIO_ACTION
+            },
+            {
+                "MessageAuditEvent",
+                Enumerations.Intents.MESSAGE_AUDIT
+            },
+            {
+                "ThreadEvent",
+                Enumerations.Intents.PRIVATE_FORUMS_EVENT
+            },
+            {
+                "PostEvent",
+                Enumerations.Intents.PRIVATE_FORUMS_EVENT
+            },
+            {
+                "ReplyEvent",
+                Enumerations.Intents.PRIVATE_FORUMS_EVENT
+            },
+            {
+                "ForumAuditEvent",
+                Enumerations.Intents.PRIVATE_FORUMS_EVENT
+            },
+            {
+                "InteractionEvent",
+                Enumerations.Intents.INTERACTION
+            }
+        };
+
+        private int _intents;
         private bool _disposed;
         /// <summary>
         /// 事件解析
@@ -625,5 +699,39 @@ namespace QQChannelSharp.Events
                     && parameters[0].ParameterType.IsAssignableTo(typeof(BaseChannelEventArgs));
             }
         }
+
+        public int GetIntents()
+        {
+            // 根据订阅的事件自动注册
+            int intents = _intents;
+            var events = GetType().GetEvents();
+            foreach (var eventInfo in events)
+            {
+                var evtDelegate = GetType().GetField(eventInfo.Name, BindingFlags.Instance | BindingFlags.NonPublic);
+                if (evtDelegate?.GetValue(this) == null)
+                    continue; // 这个事件没有被订阅
+                if (_intentsMapping.TryGetValue(eventInfo.Name, out var intent)
+                    && (intents & (int)intent) == 0)
+                {
+                    intents |= (int)intent;
+                    Log.LogDebug("Intents", $"已注册{intent}");
+                }
+            }
+            return intents;
+        }
+
+        public IAsyncEventBus Intents(params Intents[] intents)
+        {
+            foreach (Intents intent in intents)
+            {
+                if (HasIntents(intent))
+                    throw new ArgumentException($"重复订阅:{intent}");
+                _intents |= (int)intent;
+            }
+            return this;
+        }
+
+        public bool HasIntents(Intents intents)
+            => (_intents & (int)intents) != 0;
     }
 }

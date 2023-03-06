@@ -257,7 +257,7 @@ namespace QQChannelSharp.Sessions
                 {
                     Guid = Guid.NewGuid(),
                     BotInfo = _botInfo,
-                    Intent = _botInfo.Intents,
+                    Intent = EventBus.GetIntents(),
                     Id = string.Empty,
                     LastSeq = 0,
                     Url = _apInfo.Url,
@@ -270,7 +270,6 @@ namespace QQChannelSharp.Sessions
             }
         }
 
-
         public async Task StartAndWait()
         {
             for (int i = 0; i < _apInfo.Shards; i++) // 开始往管道里塞入初始的数据
@@ -279,7 +278,7 @@ namespace QQChannelSharp.Sessions
                 {
                     Guid = Guid.NewGuid(),
                     BotInfo = _botInfo,
-                    Intent = _botInfo.Intents,
+                    Intent = EventBus.GetIntents(),
                     Id = string.Empty,
                     LastSeq = 0,
                     Url = _apInfo.Url,

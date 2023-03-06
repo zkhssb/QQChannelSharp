@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Enumerations;
 using QQChannelSharp.EventArgs;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.WebSocket;
@@ -110,5 +111,21 @@ namespace QQChannelSharp.Events
         /// 注册一个监听器
         /// </summary>
         void Subscribe(object listener);
+
+        /// <summary>
+        /// 获取Intents
+        /// </summary>
+        int GetIntents();
+
+        /// <summary>
+        /// 注册intents
+        /// 默认会自动注册! 如果已经注册过了就不会再注册了!
+        /// </summary>
+        IAsyncEventBus Intents(params Intents[] intents);
+
+        /// <summary>
+        /// 是否已经注册某个intents
+        /// </summary>
+        bool HasIntents(Intents intents);
     }
 }
