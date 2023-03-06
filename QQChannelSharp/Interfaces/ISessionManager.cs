@@ -9,6 +9,11 @@ namespace QQChannelSharp.Interfaces
     public interface ISessionManager : IDisposable
     {
         /// <summary>
+        /// Api
+        /// </summary>
+        IOpenApi OpenApi { get; }
+
+        /// <summary>
         /// 异步启动SessionManager (非阻塞)
         /// </summary>
         /// <returns></returns>

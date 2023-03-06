@@ -1,5 +1,6 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.EventArgs;
+using QQChannelSharp.Interfaces;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 
@@ -99,11 +100,11 @@ namespace QQChannelSharp.Events
         /// <summary>
         /// 推送事件
         /// </summary>
-        Task PublishAsync(WebSocketPayload payload, Session session);
+        Task PublishAsync(WebSocketPayload payload, Session session, IOpenApi openApi);
         /// <summary>
         /// 推送WebSocket错误
         /// </summary>
-        Task PublishWebSocketErrorAsync(Session session, WebSocketException ex);
+        Task PublishWebSocketErrorAsync(Session session, WebSocketException ex, IOpenApi openApi);
 
         /// <summary>
         /// 注册一个监听器

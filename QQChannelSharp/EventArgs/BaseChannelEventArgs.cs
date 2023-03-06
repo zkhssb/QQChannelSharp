@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.WebSocket;
+using QQChannelSharp.Interfaces;
 using QQChannelSharp.WebSocket;
 
 namespace QQChannelSharp.EventArgs
@@ -14,5 +15,10 @@ namespace QQChannelSharp.EventArgs
         /// 原始信息
         /// </summary>
         public required WebSocketPayload Payload { get; init; }
+
+        /// <summary>
+        /// 公开应用接口
+        /// </summary>
+        public required IOpenApi OpenApi { get; init; }
     }
 }

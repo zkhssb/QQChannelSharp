@@ -10,7 +10,9 @@ using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.EventArgs;
 using QQChannelSharp.Extensions;
+using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
+using QQChannelSharp.OpenApi;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 using System.Reflection;
@@ -21,7 +23,7 @@ namespace QQChannelSharp.Events
     /// 事件处理器方法委托
     /// </summary>
     /// <returns></returns>
-    internal delegate Task AsyncEventHandlerFunction(WebSocketPayload payload, Session session);
+    internal delegate Task AsyncEventHandlerFunction(WebSocketPayload payload, Session session, IOpenApi openApi);
     /// <summary>
     /// 异步事件总线
     /// </summary>
@@ -34,6 +36,7 @@ namespace QQChannelSharp.Events
         /// 事件解析
         /// </summary>
         private readonly Dictionary<OPCode, Dictionary<string, AsyncEventHandlerFunction>> _eventParseFunc;
+        private readonly IOpenApi _openApi;
 
         public event EventAsyncCallBackHandler<ReadyEvent>? Ready;
         public event EventAsyncCallBackHandler<ResumedEvent>? Resumed;
@@ -58,7 +61,7 @@ namespace QQChannelSharp.Events
         public event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
         public event EventAsyncCallBackHandler<HandlerErrorEvent>? HandlerErrorEvent;
 
-        public AsyncEventBus()
+        public AsyncEventBus(IOpenApi openApi)
         {
             _eventParseFunc = new()
             {
@@ -231,8 +234,9 @@ namespace QQChannelSharp.Events
                     }
                 }
             };
+            _openApi = openApi;
         }
-        public async Task PublishAsync(WebSocketPayload payload, Session session)
+        public async Task PublishAsync(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             try
             {
@@ -242,12 +246,12 @@ namespace QQChannelSharp.Events
                     if (message.TryGetValue(payload.EventType?.ToUpper() ?? string.Empty, out AsyncEventHandlerFunction? func)
                         && null != func)
                     {
-                        await func(payload, session);
+                        await func(payload, session, openApi);
                     }
                 }
                 else // 如果没有就通知普通消息事件
                 {
-                    await PlainEventHandler(payload, session);
+                    await PlainEventHandler(payload, session, openApi);
                 }
             }
             catch (Exception ex)
@@ -255,6 +259,7 @@ namespace QQChannelSharp.Events
                 if (null != HandlerErrorEvent)
                     await HandlerErrorEvent(new()
                     {
+                        OpenApi = openApi,
                         Exception = ex,
                         Payload = payload,
                         Session = session
@@ -266,11 +271,12 @@ namespace QQChannelSharp.Events
             }
         }
 
-        public async Task PublishWebSocketErrorAsync(Session session, WebSocketException ex)
+        public async Task PublishWebSocketErrorAsync(Session session, WebSocketException ex, IOpenApi openApi)
         {
             if (ErrorNotify != null)
                 await ErrorNotify.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = new(),
                     Error = new()
                     {
@@ -291,21 +297,23 @@ namespace QQChannelSharp.Events
             }
         }
 
-        private async Task PlainEventHandler(WebSocketPayload payload, Session session)
+        private async Task PlainEventHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (PlainEvent != null)
                 await PlainEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session
                 });
         }
 
-        private async Task ErrorNotifyHandler(WebSocketPayload? payload, Session session)
+        private async Task ErrorNotifyHandler(WebSocketPayload? payload, Session session, IOpenApi openApi)
         {
             if (ErrorNotify != null)
                 await ErrorNotify.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload ?? new(),
                     Session = session,
                     Error = new()
@@ -317,33 +325,36 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task ReadyHandler(WebSocketPayload payload, Session session)
+        private async Task ReadyHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (Ready != null)
                 await Ready.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     ReadyData = payload.GetData<WSReadyData>()
                 });
         }
 
-        private async Task ResumedHandler(WebSocketPayload payload, Session session)
+        private async Task ResumedHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (Resumed != null)
                 await Resumed.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     ResumeData = payload.GetData<WSResumeData>()
                 });
         }
 
-        private async Task GuildHandler(WebSocketPayload payload, Session session)
+        private async Task GuildHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (GuildEvent != null)
                 await GuildEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     EventGuild = payload.GetData<Guild>(),
@@ -352,11 +363,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task ChannelHandler(WebSocketPayload payload, Session session)
+        private async Task ChannelHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (ChannelEvent != null)
                 await ChannelEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     EventType = payload.GetEventType(),
@@ -365,11 +377,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task GuildMemberHandler(WebSocketPayload payload, Session session)
+        private async Task GuildMemberHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (GuildMemberEvent != null)
                 await GuildMemberEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     EventType = payload.GetEventType(),
@@ -378,33 +391,36 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task MessageHandler(WebSocketPayload payload, Session session)
+        private async Task MessageHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (MessageEvent != null)
                 await MessageEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Message = payload.GetData<Message>(),
                 });
         }
 
-        private async Task MessageDeleteHandler(WebSocketPayload payload, Session session)
+        private async Task MessageDeleteHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (MessageDeleteEvent != null)
                 await MessageDeleteEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     MessageDelete = payload.GetData<MessageDelete>(),
                 });
         }
 
-        private async Task MessageReactionHandler(WebSocketPayload payload, Session session)
+        private async Task MessageReactionHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (MessageReactionEvent != null)
                 await MessageReactionEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     EventType = payload.GetEventType(),
@@ -413,55 +429,60 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task AtMessageHandler(WebSocketPayload payload, Session session)
+        private async Task AtMessageHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (ATMessageEvent != null)
                 await ATMessageEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Message = payload.GetData<Message>(),
                 });
         }
 
-        private async Task PublicMessageDeleteHandler(WebSocketPayload payload, Session session)
+        private async Task PublicMessageDeleteHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (PublicMessageDeleteEvent != null)
                 await PublicMessageDeleteEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     MessageDelete = payload.GetData<MessageDelete>(),
                 });
         }
 
-        private async Task DirectMessageHandler(WebSocketPayload payload, Session session)
+        private async Task DirectMessageHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (DirectMessageEvent != null)
                 await DirectMessageEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Message = payload.GetData<Message>(),
                 });
         }
 
-        private async Task DirectMessageDeleteHandler(WebSocketPayload payload, Session session)
+        private async Task DirectMessageDeleteHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (DirectMessageDeleteEvent != null)
                 await DirectMessageDeleteEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     MessageDelete = payload.GetData<MessageDelete>(),
                 });
         }
 
-        private async Task AudioHandler(WebSocketPayload payload, Session session)
+        private async Task AudioHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (AudioEvent != null)
                 await AudioEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     EventType = payload.GetEventType(),
@@ -470,11 +491,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task MessageAuditHandler(WebSocketPayload payload, Session session)
+        private async Task MessageAuditHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (MessageAuditEvent != null)
                 await MessageAuditEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Result = payload.GetEventType().GetMessageAuditType(),
@@ -482,11 +504,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task ThreadHandler(WebSocketPayload payload, Session session)
+        private async Task ThreadHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (ThreadEvent != null)
                 await ThreadEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Thread = payload.GetData<Dto.Forum.Thread>(),
@@ -495,11 +518,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task PostHandler(WebSocketPayload payload, Session session)
+        private async Task PostHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (PostEvent != null)
                 await PostEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Post = payload.GetData<Dto.Forum.Post>(),
@@ -508,11 +532,12 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task ReplyHandler(WebSocketPayload payload, Session session)
+        private async Task ReplyHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (ReplyEvent != null)
                 await ReplyEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Reply = payload.GetData<Dto.Forum.Reply>(),
@@ -521,22 +546,24 @@ namespace QQChannelSharp.Events
                 });
         }
 
-        private async Task ForumAuditHandler(WebSocketPayload payload, Session session)
+        private async Task ForumAuditHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (ForumAuditEvent != null)
                 await ForumAuditEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Result = payload.GetData<ForumAuditResult>(),
                 });
         }
 
-        private async Task InteractionHandler(WebSocketPayload payload, Session session)
+        private async Task InteractionHandler(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
             if (InteractionEvent != null)
                 await InteractionEvent.Invoke(new()
                 {
+                    OpenApi = openApi,
                     Payload = payload,
                     Session = session,
                     Interaction = payload.GetData<Interaction>(),
