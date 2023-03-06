@@ -396,6 +396,7 @@ namespace QQChannelSharp.Events
             if (MessageEvent != null)
                 await MessageEvent.Invoke(new()
                 {
+                    Context = new(openApi, payload.GetData<Message>()),
                     OpenApi = openApi,
                     Payload = payload,
                     Session = session,
@@ -434,6 +435,7 @@ namespace QQChannelSharp.Events
             if (ATMessageEvent != null)
                 await ATMessageEvent.Invoke(new()
                 {
+                    Context = new(openApi, payload.GetData<Message>()),
                     OpenApi = openApi,
                     Payload = payload,
                     Session = session,
@@ -458,6 +460,7 @@ namespace QQChannelSharp.Events
             if (DirectMessageEvent != null)
                 await DirectMessageEvent.Invoke(new()
                 {
+                    Context = new(openApi, payload.GetData<Message>()),
                     OpenApi = openApi,
                     Payload = payload,
                     Session = session,

@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto.Message;
+using QQChannelSharp.Entities;
 
 namespace QQChannelSharp.EventArgs
 {
@@ -11,5 +12,10 @@ namespace QQChannelSharp.EventArgs
         /// 消息数据
         /// </summary>
         public required Message Message { get; init; }
+
+        /// <summary>
+        /// 简单消息内容
+        /// </summary>
+        public required MessageContext Context { get; init; }
     }
 }
