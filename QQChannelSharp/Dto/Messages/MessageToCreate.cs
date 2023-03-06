@@ -15,7 +15,7 @@ namespace QQChannelSharp.Dto.Messages
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("content")]
-        public string? Content { get; set; }
+        public virtual string? Content { get; set; }
 
         /// <summary>
         /// 附件消息

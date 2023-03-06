@@ -12,7 +12,6 @@ using QQChannelSharp.EventArgs;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
-using QQChannelSharp.OpenApi;
 using QQChannelSharp.WebSocket;
 using System.Net.WebSockets;
 using System.Reflection;

@@ -55,15 +55,19 @@ namespace QQChannelSharp.Dto.Message
 
         /// <summary>
         /// 消息发送方
+        /// 当消息返回时为Null,接收消息时不为NULL
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("author")]
-        public required User Author { get; set; }
+        public User? Author { get; set; }
 
         /// <summary>
         /// 消息发送方Author的member属性，只是部分属性
+        /// 当消息返回时为Null,接收消息时不为NULL
         /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("member")]
-        public required Member Member { get; set; }
+        public Member? Member { get; set; }
 
         /// <summary>
         /// 附件

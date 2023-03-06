@@ -1,10 +1,10 @@
-﻿using QQChannelSharp.Dto.Message;
+﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Dto.Direct;
+using QQChannelSharp.Dto.Message;
 using QQChannelSharp.Dto.Messages;
-using QQChannelSharp.Dto;
 using QQChannelSharp.Enumerations;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.OpenApi;
-using QQChannelSharp.Dto.Direct;
 
 namespace QQChannelSharp.Entities
 {
