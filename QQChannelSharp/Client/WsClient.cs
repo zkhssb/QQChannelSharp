@@ -293,6 +293,6 @@ namespace QQChannelSharp.Client
             }
         }
         private string GetLogTag()
-            => $"ws/{(string.IsNullOrEmpty(_session.Id) ? "nosid" : _session.Id)}";
+            => $"ws/{(string.IsNullOrEmpty(_session.Id) ? "无会话ID" : _session.Id)}";
     }
 }
