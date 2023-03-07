@@ -11,7 +11,7 @@
         }
         public override string ToCommandText()
         {
-            return $"<!@{_userId}>";
+            return $"<@{_userId}>";
         }
         public override string ToString()
         {
