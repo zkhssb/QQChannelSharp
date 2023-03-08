@@ -20,6 +20,7 @@ namespace QQChannelSharp.Client
             _options.Converters.Add(new EmptyStringConverter());
         }
 
+        private int _errorCode;
         private bool _disposed;
         private Task? _heartbeatTask;
         private Task? _listeningTask;
@@ -170,7 +171,6 @@ namespace QQChannelSharp.Client
         }
         private async Task ListeningAsync()
         {
-            int errorCode = -1;
             // 开始监听数据
             while (!_tokenSource.IsCancellationRequested && _webSocket.State == WebSocketState.Open)
             {
@@ -187,16 +187,19 @@ namespace QQChannelSharp.Client
                             {
                                 ms.Write(_buffer, 0, receiveResult.Count);
                             }
+                            else if (receiveResult.MessageType == WebSocketMessageType.Close)
+                            {
+                                Log.LogDebug(GetLogTag(), $"连接已关闭,原因: {receiveResult.CloseStatusDescription ?? "无"}");
+                                if (receiveResult.CloseStatus is not null)
+                                    _errorCode = (int)receiveResult.CloseStatus;
+                                ClientClosed?.Invoke(_session, _errorCode, receiveResult.CloseStatusDescription ?? "无"); // 通知后退出
+                                return;
+                            }
                         }
                         if (receiveResult.EndOfMessage)
                             break;
                     }
-                    if (await HandleMessageAsync(Encoding.UTF8.GetString(ms.ToArray())))
-                    {
-                        errorCode = 4009; // 如果处理消息返回True 那么就是收到了需要重连的消息
-                        ClientClosed?.Invoke(_session, errorCode); // 通知后退出
-                        return;
-                    }
+                    await HandleMessageAsync(Encoding.UTF8.GetString(ms.ToArray()));
                 }
                 catch (WebSocketException ex)
                 {
@@ -204,7 +207,7 @@ namespace QQChannelSharp.Client
                     if (null != Error)
                         await Error(_session, ex);
 
-                    errorCode = ex.ErrorCode;
+                    _errorCode = ex.ErrorCode;
                     break; // 跳出While
                 }
                 catch (TaskCanceledException)
@@ -216,7 +219,7 @@ namespace QQChannelSharp.Client
                     Log.LogError("ws", ex.ToString());
                 }
             }
-            ClientClosed?.Invoke(_session, errorCode); // 已取消 or 连接已断开但是不知道原因
+            ClientClosed?.Invoke(_session, _errorCode, "None"); // 已取消 or 连接已断开但是不知道原因
         }
 
         public Session Session()
@@ -242,10 +245,10 @@ namespace QQChannelSharp.Client
         /// </summary>
         /// <param name="msg">消息纯文本</param>
         /// <returns>如果需要关闭连接,则返回True</returns>
-        private async Task<bool> HandleMessageAsync(string message)
+        private async ValueTask HandleMessageAsync(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
-                return false;
+                return;
             Log.LogDebug(GetLogTag(), message);
             //Console.WriteLine("{0}_WS: {1}", _session.Id, message);
             WebSocketPayload payload = JsonSerializer.Deserialize<WebSocketPayload>(message, _options)
@@ -254,8 +257,6 @@ namespace QQChannelSharp.Client
             SaveSeq(payload.Seq);
             switch (payload.OPCode)
             {
-                case OPCode.WSReconnect:
-                    return true; // 返回True,断开连接并重连
                 case OPCode.WSDispatchEvent:
                     HandleDispatch(payload);
                     break;
@@ -269,9 +270,7 @@ namespace QQChannelSharp.Client
             }
             if (null != Received)
                 await Received.Invoke(_session, payload);
-            return false;
         }
-
         private void SaveSeq(int seq)
         {
             if (seq > 0)

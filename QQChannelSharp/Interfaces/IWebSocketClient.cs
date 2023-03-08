@@ -6,7 +6,7 @@ namespace QQChannelSharp.WebSocket
     /// <summary>
     /// WebSocket连接关闭异步回调
     /// </summary>
-    public delegate Task WebSocketClosedAsyncCallBack(Session session, int closeCode);
+    public delegate Task WebSocketClosedAsyncCallBack(Session session, int closeCode, string message);
     public delegate Task WebSocketErrorAsyncCallBack(Session session, WebSocketException error);
     public delegate Task PayloadReceivedAsyncCallBack(Session session, WebSocketPayload payload);
     public interface IWebSocketClient : IDisposable

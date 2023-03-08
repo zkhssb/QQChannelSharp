@@ -36,5 +36,11 @@ namespace QQChannelSharp.Interfaces
         /// 事件总线
         /// </summary>
         IAsyncEventBus EventBus { get; }
+
+        /// <summary>
+        /// 当前会话管理器是否已经关闭(所有Session鉴权失败)
+        /// </summary>
+
+        bool Closed { get; }
     }
 }

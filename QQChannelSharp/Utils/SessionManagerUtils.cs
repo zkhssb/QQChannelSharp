@@ -31,7 +31,9 @@
         /// </summary>
         public static bool CanNotIdentify(int code)
         {
-            return code == 9006; // 9006  不允许连接的关闭连接错误，比如机器人被封禁
+            return code is 9006 or 4014;
+            // 9006  不允许连接的关闭连接错误，比如机器人被封禁
+            // 4014  错误的鉴权(监听的事件没有权限呀这些)
         }
     }
 }

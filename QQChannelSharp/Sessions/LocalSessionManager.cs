@@ -3,6 +3,7 @@ using QQChannelSharp.Client;
 using QQChannelSharp.Dto.WebSocket;
 using QQChannelSharp.Events;
 using QQChannelSharp.Interfaces;
+using QQChannelSharp.Logger;
 using QQChannelSharp.OpenApi;
 using QQChannelSharp.Utils;
 using QQChannelSharp.WebSocket;
@@ -16,6 +17,10 @@ namespace QQChannelSharp.Sessions
     public class LocalSessionManager : ISessionManager
     {
         private bool _disposed;
+        /// <summary>
+        /// 当前是否已停止
+        /// </summary>
+        private bool _closed;
         /// <summary>
         /// 接口
         /// </summary>
@@ -65,6 +70,8 @@ namespace QQChannelSharp.Sessions
 
         public IOpenApi OpenApi
             => _openApi;
+
+        public bool Closed => _closed;
 
         public LocalSessionManager(ChannelBotInfo botInfo, OpenApiOptions options)
         {
@@ -188,7 +195,7 @@ namespace QQChannelSharp.Sessions
         /// <summary>
         /// 当一个会话的WebSocket关闭
         /// </summary>
-        private async Task OnWebSocketClosed(Session session, int code)
+        private async Task OnWebSocketClosed(Session session, int code, string message)
         {
             TryRemoveTask(session); // 连接已经关闭, 首先移除任务
 
@@ -199,10 +206,16 @@ namespace QQChannelSharp.Sessions
             else // 否则需要判断这个错误代码是否是官方规定的不可再次重连的错误码
             {
                 if (SessionManagerUtils.CanNotIdentify(code))
-                    return; // 不能进行鉴权, 这里不再处理这个session 直接返回
+                {
+                    Log.LogFatal("SessionManager", $"会话内部ID: {session.Guid} / 鉴权失败, 原因: {message}");
+                    // 因为会话管理器是管理一个机器人的所有分片,既然这个分片鉴权失败,那自然其他分片也一样会鉴权失败,这里将关闭连接
+                    Dispose();
+                    return; // 不能进行鉴权,直接返回
+                }
 
                 if (SessionManagerUtils.CanNotResume(code)) // 对于不能够进行重连的session，需要清空 session id 与 seq
                 {
+                    Log.LogWarning("SessionManager", $"会话ID: {session.Id} / 重连失败, 原因: {message}");
                     session.Id = string.Empty;
                     session.LastSeq = 0;
                 }
@@ -325,18 +338,22 @@ namespace QQChannelSharp.Sessions
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            lock (this)
             {
-                if (disposing)
+                if (!_disposed)
                 {
-                    _sessionHandler.Dispose(); // 先销毁监听器,以免关闭Session后重连
-                    CloseAllSession(); // 关闭并销毁所有Session
-                    _sessionChan.Dispose(); // 销毁管道
-                    _eventBus.Dispose();
-                    _semaphoreSlim.Dispose(); // 销毁锁
-                }
+                    if (disposing)
+                    {
+                        _sessionHandler.Dispose(); // 先销毁监听器,以免关闭Session后重连
+                        CloseAllSession(); // 关闭并销毁所有Session
+                        _sessionChan.Dispose(); // 销毁管道
+                        _eventBus.Dispose();
+                        _semaphoreSlim.Dispose(); // 销毁锁
+                    }
 
-                _disposed = true;
+                    _closed = true;
+                    _disposed = true;
+                }
             }
         }
 
