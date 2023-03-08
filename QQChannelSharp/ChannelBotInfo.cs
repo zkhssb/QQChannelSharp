@@ -1,6 +1,4 @@
-﻿using QQChannelSharp.Enumerations;
-
-namespace QQChannelSharp
+﻿namespace QQChannelSharp
 {
     public partial class ChannelBotInfo
     {

@@ -13,7 +13,6 @@ using QQChannelSharp.Extensions;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
 using QQChannelSharp.WebSocket;
-using System.ComponentModel;
 using System.Net.WebSockets;
 using System.Reflection;
 
