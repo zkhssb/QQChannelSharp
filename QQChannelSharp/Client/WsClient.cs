@@ -26,8 +26,8 @@ namespace QQChannelSharp.Client
         private Task? _listeningTask;
         private readonly Session _session;
         private int _heartbeatInterval = 60 * 1000; // 默认值,后面会自动设置
-        private byte[] _buffer = new byte[4096]; // _buffer
-        private SemaphoreSlim _semaphoreSlim = new(1);
+        private readonly byte[] _buffer = new byte[4096]; // _buffer
+        private readonly SemaphoreSlim _semaphoreSlim = new(1);
 
         public WsClient(Session session)
         {
@@ -46,7 +46,7 @@ namespace QQChannelSharp.Client
         {
             try
             {
-                WebSocketPayload payload = new WebSocketPayload()
+                var payload = new WebSocketPayload()
                 {
                     OPCode = OPCode.WSHeartbeat,
                     Data = _session.LastSeq

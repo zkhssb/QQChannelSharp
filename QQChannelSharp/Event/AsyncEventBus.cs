@@ -109,7 +109,6 @@ namespace QQChannelSharp.Events
         /// 事件解析
         /// </summary>
         private readonly Dictionary<OPCode, Dictionary<string, AsyncEventHandlerFunction>> _eventParseFunc;
-        private readonly IOpenApi _openApi;
 
         public event EventAsyncCallBackHandler<ReadyEvent>? Ready;
         public event EventAsyncCallBackHandler<ResumedEvent>? Resumed;
@@ -134,7 +133,7 @@ namespace QQChannelSharp.Events
         public event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
         public event EventAsyncCallBackHandler<HandlerErrorEvent>? HandlerErrorEvent;
 
-        public AsyncEventBus(IOpenApi openApi)
+        public AsyncEventBus()
         {
             _eventParseFunc = new()
             {
@@ -307,7 +306,6 @@ namespace QQChannelSharp.Events
                     }
                 }
             };
-            _openApi = openApi;
         }
         public async Task PublishAsync(WebSocketPayload payload, Session session, IOpenApi openApi)
         {
@@ -367,6 +365,7 @@ namespace QQChannelSharp.Events
             {
                 _disposed = true;
                 _eventParseFunc.Clear();
+                GC.SuppressFinalize(this);
             }
         }
 

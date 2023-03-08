@@ -24,7 +24,7 @@ namespace QQChannelSharp
         /// </summary>
         public Uri ApiUri
         {
-            get => new Uri(SandBox ? "https://api.sgroup.qq.com/" : "https://api.sgroup.qq.com/");
+            get => new(SandBox ? "https://api.sgroup.qq.com/" : "https://api.sgroup.qq.com/");
         }
         #endregion
         #region 构造函数

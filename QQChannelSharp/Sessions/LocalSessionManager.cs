@@ -92,7 +92,7 @@ namespace QQChannelSharp.Sessions
 
             _sessionTasks = new();
 
-            _eventBus = new AsyncEventBus(_openApi);
+            _eventBus = new AsyncEventBus();
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace QQChannelSharp.Sessions
                 }
                 catch (WebSocketException ex)
                 {
-                    Console.WriteLine("shard{0} connect error: {0}", session.Shard.ShardID, ex.WebSocketErrorCode.ToString());
+                    Log.LogError("WebSocketError", $"会话: {session.Shard.ShardID} 连接时出现错误/{ex.GetType().Name}:{ex.Message}");
 
                     wsClient.ClientClosed -= OnWebSocketClosed;
                     wsClient.Received -= OnReceived;
@@ -313,6 +313,7 @@ namespace QQChannelSharp.Sessions
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
