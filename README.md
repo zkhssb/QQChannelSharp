@@ -27,7 +27,7 @@ QQChannelSharp
 
 ## 文档
 
-<a href="https://www.yuque.com/miuxue/gh07pk">语雀文档</a>
+<a href="https://www.yuque.com/miuxue/gh07pk" target="_blank">语雀文档</a>
 
 ## 能力
 
