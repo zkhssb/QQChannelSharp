@@ -77,7 +77,7 @@ QQChannelSharp
 
 ### 交流
 
-在使用中有任何疑问可以加入我们的[QQ频道]("https://pd.qq.com/s/6ndoh4n4v")
+在使用中有任何疑问可以加入我们的[QQ频道](https://pd.qq.com/s/6ndoh4n4v)
 
 ---
 
