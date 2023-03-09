@@ -83,7 +83,7 @@ QQChannelSharp
 
 ## 依赖的开源库
 
-> [RestSharp]("https://github.com/restsharp/RestSharp") | .NET HTTPAPI客户端
+> [RestSharp](https://github.com/restsharp/RestSharp) | .NET HTTPAPI客户端
 
 ---
 
@@ -118,7 +118,7 @@ Log.Configuration
 
 这边演示最简单的 直接使用+=注册事件
 
-需要更高级的订阅请参考文档: [事件订阅]("https://www.yuque.com/miuxue/gh07pk/vifx049dwagm3kg7")
+需要更高级的订阅请参考文档: [事件订阅](https://www.yuque.com/miuxue/gh07pk/vifx049dwagm3kg7)
 
 ```csharp
 ChannelBotInfo botInfo = new("AppId", "Token", true); // 设置机器人信息
