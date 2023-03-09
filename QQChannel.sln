@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QQChannelSharp", "QQChannel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QQChannelSharp.Example", "QQChannelSharp.Example\QQChannelSharp.Example.csproj", "{8A02BC84-5189-4002-BC3D-99475C5B86BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QQChannelSharp.Tests", "QQChannelSharp.Tests\QQChannelSharp.Tests.csproj", "{6C71E50C-0745-40DB-A135-897E4B5A4973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QQChannelSharp.Tests", "QQChannelSharp.Tests\QQChannelSharp.Tests.csproj", "{6C71E50C-0745-40DB-A135-897E4B5A4973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

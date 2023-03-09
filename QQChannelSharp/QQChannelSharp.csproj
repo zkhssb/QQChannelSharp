@@ -1,26 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Description>.NET7异步QQ频道机器人开发框架</Description>
+		<PackageTags>QQ;QQChannel;multi-platform;framework;library</PackageTags>
+		<RepositoryUrl>https://github.com/zkhssb/QQChannelSharp</RepositoryUrl>
+		<PackageIcon>Icon.png</PackageIcon>
+		<Authors>MiuxuE</Authors>
+		<PackageProjectUrl>https://github.com/zkhssb/QQChannelSharp</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>False</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<Optimize>False</Optimize>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="RestSharp" Version="108.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="RestSharp" Version="108.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Logger\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Logger\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
 
 </Project>
