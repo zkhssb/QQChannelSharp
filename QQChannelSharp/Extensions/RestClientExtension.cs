@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Dto;
+using QQChannelSharp.Logger;
 using QQChannelSharp.OpenApi;
 using RestSharp;
 using System.Text.Json;
@@ -41,6 +42,7 @@ namespace QQChannelSharp.Extensions
             }
             catch (JsonException ex)
             {
+                Log.LogFatal("Json序列化错误", ex.ToString());
                 data = default;
                 error = new()
                 {
