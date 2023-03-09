@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="QQChannelSharp/icon.png" />
+<img src="QQChannelSharp/Icon.png" />
 <br />
 QQChannelSharp
 <br />
@@ -24,6 +24,10 @@ QQChannelSharp
 ​ alt="workflow" />
 ​ </h4>
 ​ </h1>
+
+## 文档
+
+<a href="https://www.yuque.com/miuxue/gh07pk">语雀文档</a>
 
 ## 能力
 
