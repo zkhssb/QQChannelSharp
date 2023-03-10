@@ -95,7 +95,6 @@ QQChannelSharp
 
 ```csharp
 using QQChannelSharp;
-using QQChannelSharp.Example.Handlers;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
 using QQChannelSharp.OpenApi;
@@ -147,7 +146,6 @@ static async ValueTask MessageEvent(ATMessageEvent message)
 
 ```csharp
 using QQChannelSharp;
-using QQChannelSharp.Example.Handlers;
 using QQChannelSharp.Interfaces;
 using QQChannelSharp.Logger;
 using QQChannelSharp.OpenApi;
