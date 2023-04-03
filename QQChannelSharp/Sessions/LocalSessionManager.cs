@@ -76,12 +76,15 @@ namespace QQChannelSharp.Sessions
         public LocalSessionManager(ChannelBotInfo botInfo, OpenApiOptions options)
         {
             _openApi = OpenApiFactory.Create(options);
-            var task = _openApi.GetWebSocketApAsync();
-            task.Wait();
-            if (!task.Result.IsSuccess)
-                throw new ArgumentException(task.Result.Error.Message);
+            HttpResult<WebsocketAP>? result = null;
+            Task.Run(async () =>
+            {
+                result = await _openApi.GetWebSocketApAsync();
+            }).Wait();
+            if (!(result?.IsSuccess ?? false))
+                throw new ArgumentException(result?.Error.Message);
 
-            _apInfo = task.Result.Result;
+            _apInfo = result!.Result;
             _botInfo = botInfo;
             _sessionChan = new(_apInfo.Shards); // 按照shards数量初始化，用于启动连接的管理
             _startInterval = SessionManagerUtils.CalcInterval(_apInfo.SessionStartLimit.MaxConcurrency); // 计算每次连接的延迟
