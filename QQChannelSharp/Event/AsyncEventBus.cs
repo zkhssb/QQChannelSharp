@@ -131,6 +131,7 @@ namespace QQChannelSharp.Events
         public event EventAsyncCallBackHandler<ForumAuditEvent>? ForumAuditEvent;
         public event EventAsyncCallBackHandler<InteractionEvent>? InteractionEvent;
         public event EventAsyncCallBackHandler<HandlerErrorEvent>? HandlerErrorEvent;
+        public event EventAsyncCallBackHandler<ReceivedEvent>? ReceivedEvent;
 
         public AsyncEventBus()
         {
@@ -310,6 +311,15 @@ namespace QQChannelSharp.Events
         {
             try
             {
+                if (null != ReceivedEvent)
+                {
+                    await ReceivedEvent.Invoke(new ReceivedEvent()
+                    {
+                        OpenApi = openApi,
+                        Payload = payload,
+                        Session = session
+                    });
+                }
                 // 查找处理字典中有没有这个事件的处理器
                 if (_eventParseFunc.TryGetValue(payload.OPCode, out var message))
                 {

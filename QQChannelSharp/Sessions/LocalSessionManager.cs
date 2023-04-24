@@ -59,6 +59,8 @@ namespace QQChannelSharp.Sessions
         /// </summary>
         private readonly IAsyncEventBus _eventBus;
 
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
+
         /// <summary>
         /// 只读字典, 在线的Session信息
         /// </summary>
@@ -75,6 +77,7 @@ namespace QQChannelSharp.Sessions
 
         public LocalSessionManager(ChannelBotInfo botInfo, OpenApiOptions options)
         {
+            _closed = true;
             _openApi = OpenApiFactory.Create(options);
             HttpResult<WebsocketAP>? result = null;
             Task.Run(async () =>
@@ -266,6 +269,8 @@ namespace QQChannelSharp.Sessions
 
         public async Task StartAsync()
         {
+            if (!_closed) throw new InvalidOperationException("本地会话管理器已经启动!");
+            _closed = false;
             _sessionHandler.Start(); // 开始监听管道
             for (int i = 0; i < _apInfo.Shards; i++) // 开始往管道里塞入初始的数据
             {
@@ -288,6 +293,8 @@ namespace QQChannelSharp.Sessions
 
         public async Task StartAndWait()
         {
+            if (!_closed) throw new InvalidOperationException("本地会话管理器已经启动!");
+            _closed = false;
             for (int i = 0; i < _apInfo.Shards; i++) // 开始往管道里塞入初始的数据
             {
                 await _sessionChan.WriteAsync(new Session()
@@ -309,7 +316,7 @@ namespace QQChannelSharp.Sessions
             // 阻塞的方式启动 (直接方法内读取管道)
             while (!_disposed)
             {
-                Session session = await _sessionChan.ReadAsync();
+                Session session = await _sessionChan.ReadAsync(_cancellationTokenSource.Token);
                 await NeedConnect(session);
             }
         }
@@ -348,6 +355,8 @@ namespace QQChannelSharp.Sessions
                 {
                     if (disposing)
                     {
+                        _cancellationTokenSource.Cancel();
+                        _cancellationTokenSource.Dispose(); // 销毁管道令牌
                         _sessionHandler.Dispose(); // 先销毁监听器,以免关闭Session后重连
                         CloseAllSession(); // 关闭并销毁所有Session
                         _sessionChan.Dispose(); // 销毁管道
