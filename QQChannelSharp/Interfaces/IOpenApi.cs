@@ -1,4 +1,5 @@
 ﻿using QQChannelSharp.Interfaces.OpenApi;
+using RestSharp;
 
 namespace QQChannelSharp.Interfaces
 {
@@ -18,6 +19,8 @@ namespace QQChannelSharp.Interfaces
         IWebHookApi,
         IWebSocketApi
     {
+        Task<RestResponse> SendAsync(RestRequest request);
+        RestResponse Send(RestRequest request);
         /// <summary>
         /// OpenApi版本
         /// </summary>

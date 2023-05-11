@@ -638,6 +638,14 @@ namespace QQChannelSharp.OpenApi
             return await _restClient.ExecAsync<WebsocketAP>(request);
         }
 
+        public async Task<RestResponse> SendAsync(RestRequest request)
+        {
+            return await _restClient.ExecuteAsync(request);
+        }
+
+        public RestResponse Send(RestRequest request)
+            => _restClient.Execute(request);
+
         private void Dispose()
         {
             lock (this)
