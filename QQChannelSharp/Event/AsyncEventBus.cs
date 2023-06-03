@@ -323,10 +323,32 @@ namespace QQChannelSharp.Events
                 // 查找处理字典中有没有这个事件的处理器
                 if (_eventParseFunc.TryGetValue(payload.OPCode, out var message))
                 {
+
                     if (message.TryGetValue(payload.EventType?.ToUpper() ?? string.Empty, out AsyncEventHandlerFunction? func)
                         && null != func)
                     {
-                        await func(payload, session, openApi);
+                        var _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await func(payload, session, openApi);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (null != HandlerErrorEvent)
+                                    await HandlerErrorEvent(new()
+                                    {
+                                        OpenApi = openApi,
+                                        Exception = ex,
+                                        Payload = payload,
+                                        Session = session
+                                    });
+                                else
+                                {
+                                    Log.LogFatal("EventBus/Invoke", ex.ToString(), false);
+                                }
+                            }
+                        });
                     }
                 }
                 else // 如果没有就通知普通消息事件
