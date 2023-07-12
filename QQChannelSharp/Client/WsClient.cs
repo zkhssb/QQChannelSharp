@@ -5,6 +5,7 @@ using QQChannelSharp.Exceptions;
 using QQChannelSharp.Extensions;
 using QQChannelSharp.Logger;
 using QQChannelSharp.WebSocket;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -201,25 +202,24 @@ namespace QQChannelSharp.Client
                     }
                     await HandleMessageAsync(Encoding.UTF8.GetString(ms.ToArray()));
                 }
-                catch (WebSocketException ex)
-                {
-                    Log.LogError("ws", ex.ToString());
-                    if (null != Error)
-                        await Error(_session, ex);
-
-                    _errorCode = ex.ErrorCode;
-                    break; // 跳出While
-                }
-                catch (TaskCanceledException)
-                {
-                    break; // 任务已取消, 跳出While
-                }
                 catch (Exception ex)
                 {
                     Log.LogError("ws", ex.ToString());
+                    if (ex is WebSocketException wsEx)
+                    {
+                        Log.LogError("ws", ex.ToString());
+                        if (null != Error)
+                            await Error(_session, wsEx);
+
+                        _errorCode = wsEx.ErrorCode;
+                        break;
+                    }else if (ex is HttpRequestException or SocketException or TaskCanceledException)
+                    {
+                        break;
+                    }
                 }
             }
-            ClientClosed?.Invoke(_session, _errorCode, "None"); // 已取消 or 连接已断开但是不知道原因
+            ClientClosed?.Invoke(_session, _errorCode, string.Empty); // 已取消 or 连接已断开但是不知道原因
         }
 
         public Session Session()
