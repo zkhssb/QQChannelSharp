@@ -207,7 +207,6 @@ namespace QQChannelSharp.Client
                     Log.LogError("ws", ex.ToString());
                     if (ex is WebSocketException wsEx)
                     {
-                        Log.LogError("ws", ex.ToString());
                         if (null != Error)
                             await Error(_session, wsEx);
 
