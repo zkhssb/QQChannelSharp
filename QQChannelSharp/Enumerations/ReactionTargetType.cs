@@ -1,10 +1,12 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace QQChannelSharp.Enumerations
 {
     /// <summary>
     /// 表情表态对象类型
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum ReactionTargetType
     {
         /// <summary>
