@@ -27,6 +27,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
 		<PackageReference Include="RestSharp" Version="110.2.0" />
 	</ItemGroup>
 
