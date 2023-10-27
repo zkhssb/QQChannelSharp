@@ -7,8 +7,8 @@ namespace QQChannelSharp.Dto.Roles
     /// </summary>
     public class UpdateResult
     {
-        [JsonPropertyName("guild_id")]
-        public required string GuildID { get; set; }
+        [JsonPropertyName("role_id")]
+        public required string RoleId { get; set; }
 
         [JsonPropertyName("role")]
         public required Role Role { get; set; }
