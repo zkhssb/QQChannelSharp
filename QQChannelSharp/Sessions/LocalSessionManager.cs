@@ -168,7 +168,7 @@ namespace QQChannelSharp.Sessions
                 wsClient.Error += OnWebSocketError;
                 try
                 {
-                    wsClient.Connect();
+                    await wsClient.ConnectAsync();
                     if (string.IsNullOrWhiteSpace(session.Id))
                         await wsClient.IdentifyAsync(); // sessionId为空, 尝试鉴权
                     else

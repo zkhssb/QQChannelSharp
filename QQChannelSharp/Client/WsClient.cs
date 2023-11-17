@@ -90,11 +90,11 @@ namespace QQChannelSharp.Client
             // 销毁服务
             Dispose();
         }
-        public void Connect()
+        public async Task ConnectAsync()
         {
             if (string.IsNullOrWhiteSpace(_session.Url))
                 throw new UrlInvalidException(_session);
-            _webSocket.ConnectAsync(new Uri(_session.Url), CancellationToken.None).Wait();
+            await _webSocket.ConnectAsync(new Uri(_session.Url), CancellationToken.None);
         }
         public void Dispose()
         {
@@ -211,6 +211,7 @@ namespace QQChannelSharp.Client
                             await Error(_session, wsEx);
 
                         _errorCode = wsEx.ErrorCode;
+                        Log.LogDebug("ws", $"code:{_errorCode}");
                         break;
                     }else if (ex is HttpRequestException or SocketException or TaskCanceledException)
                     {

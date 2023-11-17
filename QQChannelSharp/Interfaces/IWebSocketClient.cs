@@ -17,7 +17,7 @@ namespace QQChannelSharp.WebSocket
         /// <summary>
         /// Connect 连接到 wss 地址
         /// </summary>
-        void Connect();
+        Task ConnectAsync();
         /// <summary>
         /// Identify 鉴权连接
         /// </summary>
