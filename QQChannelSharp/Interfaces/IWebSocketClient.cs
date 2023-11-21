@@ -33,7 +33,7 @@ namespace QQChannelSharp.WebSocket
         /// <summary>
         /// Listening 监听websocket事件
         /// </summary>
-        void Listening();
+        Task StartListeningAsync();
         /// <summary>
         /// Write 发送数据
         /// </summary>

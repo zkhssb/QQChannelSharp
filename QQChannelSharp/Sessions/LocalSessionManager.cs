@@ -173,7 +173,7 @@ namespace QQChannelSharp.Sessions
                         await wsClient.IdentifyAsync(); // sessionId为空, 尝试鉴权
                     else
                         await wsClient.ResumeAsync(); // sessionId不为空, 尝试重连
-                    wsClient.Listening(); // 开始监听并处理消息
+                    await wsClient.StartListeningAsync(); // 开始监听并处理消息
                 }
                 catch (WebSocketException ex)
                 {

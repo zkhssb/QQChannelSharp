@@ -78,7 +78,7 @@ namespace QQChannelSharp.Client
                     _heartbeatTask.Dispose();
                     _heartbeatTask = null;
                 }
-                _heartbeatTask = HeartBeatTask();
+                _heartbeatTask = await Task.Factory.StartNew(HeartBeatTask, TaskCreationOptions.LongRunning);
             }
             finally
             {
@@ -164,11 +164,11 @@ namespace QQChannelSharp.Client
                 }
             });
         }
-        public void Listening()
+        public async Task StartListeningAsync()
         {
             if (_listeningTask != null)
                 throw new InvalidOperationException(); // _listeningTask已经启动
-            _listeningTask = ListeningAsync();
+            _listeningTask = await Task.Factory.StartNew(ListeningAsync, TaskCreationOptions.LongRunning);
         }
         private async Task ListeningAsync()
         {
@@ -213,7 +213,8 @@ namespace QQChannelSharp.Client
                         _errorCode = wsEx.ErrorCode;
                         Log.LogDebug("ws", $"code:{_errorCode}");
                         break;
-                    }else if (ex is HttpRequestException or SocketException or TaskCanceledException)
+                    }
+                    else if (ex is HttpRequestException or SocketException or TaskCanceledException)
                     {
                         break;
                     }
